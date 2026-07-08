@@ -1,2 +1,3 @@
-# Brew-Co
-Coffee Shop WebSite Capstone Project
+PoS
+Web-Based Point of Sale and Inventory Management System
+
