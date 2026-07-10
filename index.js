@@ -318,8 +318,7 @@ function handleLogin(event) {
 
         alert("Login Successful!");
 
-        // Redirect to contains.html
-        window.location.href = "contains.html";
+    
 
     } else {
 
