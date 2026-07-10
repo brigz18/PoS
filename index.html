@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPOS - Modern Point of Sale System</title>
+    <meta name="description" content="A Modern Cloud-Based Point of Sale and Business Management System">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <!-- Navigation -->
+        <nav id="landing-nav" class="landing-nav">
+            <div class="container nav-container">
+                <div class="logo">
+                    <span class="logo-text">SmartPOS</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="#faq">FAQ</a>
+                    <button class="btn btn-primary" onclick="showLogin()">Get Started</button>
+                </div>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <div class="badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Trusted by 5,000+ Businesses
+                    </div>
+                    <h1 class="hero-title">Modern Point of Sale <span class="gradient-text">for Modern Business</span></h1>
+                    <p class="hero-subtitle">Streamline your sales, inventory, and operations with our powerful cloud-based POS system. Built for retail, restaurants, and more.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg" onclick="showLogin()">
+                            Start Free Trial
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trusted By -->
+        <section class="trusted-section">
+            <div class="container">
+                <p class="trusted-label">TRUSTED BY LEADING BUSINESSES</p>
+                <div class="trusted-brands">
+                    <span>Starbucks</span><span>McDonalds</span><span>7-Eleven</span><span>Target</span><span>Costco</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Everything You Need to Run Your Business</h2>
+                    <p class="section-subtitle">Powerful features designed to streamline operations and boost your bottom line.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon bg-primary"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+                        <h3 class="feature-title">Point of Sale</h3>
+                        <p class="feature-desc">Fast, intuitive POS terminal with barcode scanning, quick add, and real-time inventory sync.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-success"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                        <h3 class="feature-title">Inventory Management</h3>
+                        <p class="feature-desc">Track stock levels, automate reorder points, manage suppliers and purchase orders.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-accent"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                        <h3 class="feature-title">Customer Management</h3>
+                        <p class="feature-desc">Build customer loyalty with rewards programs, personalized promotions, and purchase history.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-warning"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                        <h3 class="feature-title">Analytics & Reports</h3>
+                        <p class="feature-desc">Real-time dashboards and comprehensive reports to make data-driven decisions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-danger"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                        <h3 class="feature-title">Role-Based Access</h3>
+                        <p class="feature-desc">Secure your business with granular permissions for administrators, managers, and staff.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-info"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                        <h3 class="feature-title">Multi-Branch Support</h3>
+                        <p class="feature-desc">Manage multiple locations from a single dashboard with centralized reporting.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-gray"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+                        <h3 class="feature-title">Mobile Responsive</h3>
+                        <p class="feature-desc">Works seamlessly on desktop, tablet, and mobile devices for flexibility.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon bg-purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                        <h3 class="feature-title">Smart Notifications</h3>
+                        <p class="feature-desc">Get alerts for low stock, pending orders, and important business events.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section id="pricing" class="pricing-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Simple, Transparent Pricing</h2>
+                    <p class="section-subtitle">Choose the plan that fits your business. No hidden fees, no surprises.</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Starter</h3>
+                            <p class="pricing-desc">Perfect for small businesses</p>
+                        </div>
+                        <div class="pricing-price"><span>$29</span>/month</div>
+                        <ul class="pricing-features">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Single Branch</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Up to 500 Products</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Up to 5 Users</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Basic Reports</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Email Support</li>
+                        </ul>
+                        <button class="btn btn-secondary btn-block" onclick="showLogin()">Get Started</button>
+                    </div>
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Professional</h3>
+                            <p class="pricing-desc">For growing businesses</p>
+                        </div>
+                        <div class="pricing-price"><span>$79</span>/month</div>
+                        <ul class="pricing-features">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Up to 3 Branches</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Products</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Up to 15 Users</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Advanced Analytics</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Multi-Location Sync</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Priority Support</li>
+                        </ul>
+                        <button class="btn btn-primary btn-block" onclick="showLogin()">Get Started</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Enterprise</h3>
+                            <p class="pricing-desc">For large organizations</p>
+                        </div>
+                        <div class="pricing-price"><span>$149</span>/month</div>
+                        <ul class="pricing-features">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Branches</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Products</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Users</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Custom Reports</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> API Access</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 24/7 Support</li>
+                        </ul>
+                        <button class="btn btn-secondary btn-block" onclick="showLogin()">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section id="testimonials" class="testimonials-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Loved by Business Owners</h2>
+                    <p class="section-subtitle">See how SmartPOS is helping businesses grow and succeed.</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">"</div>
+                        <p class="testimonial-text">SmartPOS transformed our cafe operations. We process orders 40% faster and our inventory is always accurate.</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Maria Santos">
+                            <div>
+                                <div class="author-name">Maria Santos</div>
+                                <div class="author-role">Cafe Owner, Brew & Bean</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">"</div>
+                        <p class="testimonial-text">The analytics dashboard gives us incredible insights. We know exactly what sells and when to optimize our menu.</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150" alt="James Rodriguez">
+                            <div>
+                                <div class="author-name">James Rodriguez</div>
+                                <div class="author-role">Restaurant Manager, Grill House</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote">"</div>
+                        <p class="testimonial-text">Managing 3 branches was a nightmare before SmartPOS. Now everything is in one place and I can see real-time sales from anywhere.</p>
+                        <div class="testimonial-author">
+                            <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Anna Cruz">
+                            <div>
+                                <div class="author-name">Anna Cruz</div>
+                                <div class="author-role">Store Owner, Style Hub Boutique</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">Got questions? We've got answers.</p>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-question">
+                            <span>How do I get started with SmartPOS?</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="faq-answer">Simply click the Get Started button, create your account, and you can start using SmartPOS immediately. Our onboarding wizard will guide you through the setup process.</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-question">
+                            <span>Can I use SmartPOS on multiple devices?</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="faq-answer">Yes! SmartPOS is cloud-based and works on any device with a web browser. Your data syncs in real-time across all devices.</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-question">
+                            <span>Is my data secure?</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="faq-answer">Absolutely. We use enterprise-grade encryption, secure cloud infrastructure, and regular backups to ensure your data is always safe and protected.</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <div class="faq-question">
+                            <span>Can I cancel my subscription anytime?</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="faq-answer">Yes, you can cancel your subscription at any time. There are no long-term contracts or cancellation fees.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="container">
+                <h2 class="cta-title">Ready to Transform Your Business?</h2>
+                <p class="cta-subtitle">Join thousands of businesses already using SmartPOS.</p>
+                <button class="btn btn-white btn-lg" onclick="showLogin()">
+                    Start Your Free Trial
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+                            <span class="logo-text">SmartPOS</span>
+                        </div>
+                        <p class="footer-desc">Modern Point of Sale system for modern businesses.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#pricing">Pricing</a>
+                        <a href="#">Integrations</a>
+                        <a href="#">Updates</a>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Company</h4>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Contact Us</h4>
+                        <a href="mailto:support@smartpos.com">support@smartpos.com</a>
+                        <a href="tel:+15551234567">+1 (555) 123-4567</a>
+                        <a href="#">Manila, Philippines</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 SmartPOS. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="auth-container">
+            <div class="auth-form-side">
+                <button class="back-btn" onclick="showLanding()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Back to Home
+                </button>
+                <div class="auth-header">
+                    <div class="logo">
+                        <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+                        <span class="logo-text">SmartPOS</span>
+                    </div>
+                    <h1>Welcome back</h1>
+                    <p>Sign in to your account to continue</p>
+                </div>
+                <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-icon-wrapper">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <input type="email" id="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-icon-wrapper">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                                <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox">
+                            <span>Remember me</span>
+                        </label>
+                        <button type="button" class="link-btn" onclick="showForgotPassword()">Forgot password?</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">Sign In</button>
+                </form>
+                <div class="demo-accounts">
+                    <div class="divider"><span>Demo Accounts</span></div>
+                    <div class="demo-grid">
+                        <button class="btn btn-secondary btn-sm" onclick="fillDemo('admin@smartpos.com', 'password123')">Administrator</button>
+                        <button class="btn btn-secondary btn-sm" onclick="fillDemo('manager@smartpos.com', 'password123')">Manager</button>
+                        <button class="btn btn-secondary btn-sm" onclick="fillDemo('cashier@smartpos.com', 'password123')">Cashier</button>
+                        <button class="btn btn-secondary btn-sm" onclick="fillDemo('staff@smartpos.com', 'password123')">Inventory Staff</button>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-banner-side">
+                <div class="auth-banner-content">
+                    <div class="auth-banner-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </div>
+                    <h2>SmartPOS</h2>
+                    <p>A complete point of sale solution for modern businesses. Manage sales, inventory, customers, and more.</p>
+                    <div class="auth-stats">
+                        <div><span class="stat-value">5,000+</span><span class="stat-label">Active Users</span></div>
+                        <div><span class="stat-value">1M+</span><span class="stat-label">Transactions</span></div>
+                        <div><span class="stat-value">99.9%</span><span class="stat-label">Uptime</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Page -->
+    <div id="forgot-password-page" class="page">
+        <div class="auth-container">
+            <div class="auth-form-side auth-center">
+                <button class="back-btn" onclick="showLanding()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Back to Home
+                </button>
+                <div class="auth-header">
+                    <div class="logo">
+                        <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+                        <span class="logo-text">SmartPOS</span>
+                    </div>
+                    <h1>Forgot password?</h1>
+                    <p>No worries! Enter your email address and we'll send you a link to reset your password.</p>
+                </div>
+                <form class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="reset-email">Email Address</label>
+                        <div class="input-icon-wrapper">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <input type="email" id="reset-email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+                </form>
+                <div class="auth-footer">
+                    <button class="link-btn" onclick="showLogin()">Remember your password? Sign in</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+
+</body>
+</html>
