@@ -1098,6 +1098,7 @@ img {
     box-shadow:0 0 0 3px rgba(59,130,246,.15);
 }
 
+
 .toggle-password{
     position:absolute;
     right:15px;
@@ -1106,6 +1107,13 @@ img {
     background:none;
     border:none;
     cursor:pointer;
+    z-index:10;
+    padding:0;
+}
+
+.toggle-password svg{
+    display:block;
+    stroke:#9ca3af;
 }
 
 /* Remember */
@@ -1400,6 +1408,22 @@ img {
 
 .logout-btn:hover {
     background: var(--danger-100) !important;
+}
+
+/* Hide all pages by default */
+.page {
+    display: none;
+}
+
+/* Show active page */
+.page.active {
+    display: block;
+}
+
+/* Dashboard only shows when active */
+#dashboard.active {
+    display: flex;
+    min-height: 100vh;
 }
 
 /* Main Content */
@@ -2993,4 +3017,3 @@ input:checked + .slider:before {
     background: var(--gray-700);
     color: var(--gray-300);
 }
-
