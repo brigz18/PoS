@@ -252,79 +252,76 @@ function handleLogout() {
 // =======================
 // Authentication
 // =======================
-function handleLogin(event) {
-    event.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (email && password.length >= 6) {
-        // Find demo user
-        const user = employees.find(e => e.email === email) || employees[0];
-        AppData.currentUser = { ...user, email };
-
-        // Update UI
-        document.getElementById('user-name').textContent = user.name;
-        document.getElementById('user-role').textContent = user.role.replace('_', ' ');
-        document.getElementById('user-initials').textContent = getInitials(user.name);
-
-        showPage('dashboard');
-        showToast(`Welcome back, ${user.name}!`, 'success');
-    } else {
-        showToast('Please enter valid credentials', 'error');
-    }
-}
-
-function handleLogout() {
-    AppData.currentUser = null;
-    AppData.cart = [];
-    showLanding();
-    showToast('Logged out successfully', 'success');
-}
-
-function handleForgotPassword(event) {
-    event.preventDefault();
-    showToast('Password reset link sent to your email!', 'success');
-}
-
-function fillDemo(email, password) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = password;
-}
-
-function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const eyeIcon = document.getElementById('eye-icon');
-
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
-    } else {
-        passwordInput.type = 'password';
-        eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-    }
-}
 
 function handleLogin(event) {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-    // Sample login credentials
-    const validEmail = "admin@smartpos.com";
-    const validPassword = "123456";
+    // Demo Accounts
+    const accounts = [
+        {
+            email: "admin@smartpos.com",
+            password: "password123",
+            name: "Administrator",
+            role: "Admin"
+        },
+        {
+            email: "manager@smartpos.com",
+            password: "password123",
+            name: "Manager",
+            role: "Manager"
+        },
+        {
+            email: "cashier@smartpos.com",
+            password: "password123",
+            name: "Cashier",
+            role: "Cashier"
+        },
+        {
+            email: "staff@smartpos.com",
+            password: "password123",
+            name: "Inventory Staff",
+            role: "Staff"
+        }
+    ];
 
-    if (email === validEmail && password === validPassword) {
+    const user = accounts.find(
+        account =>
+            account.email === email &&
+            account.password === password
+    );
+
+    if (user) {
+
+        // Hide all pages
+        document.querySelectorAll(".page").forEach(page => {
+            page.classList.remove("active");
+        });
+
+        // Show Dashboard
+        document.getElementById("dashboard").classList.add("active");
+
+        // Update User Info (if these elements exist)
+        const userName = document.getElementById("user-name");
+        const userRole = document.getElementById("user-role");
+        const userInitials = document.getElementById("user-initials");
+
+        if (userName) userName.textContent = user.name;
+        if (userRole) userRole.textContent = user.role;
+        if (userInitials) {
+            userInitials.textContent = user.name
+                .split(" ")
+                .map(n => n[0])
+                .join("")
+                .toUpperCase();
+        }
 
         alert("Login Successful!");
 
-        // Redirect to contains.html
-        window.location.href = "contains.html";
-
     } else {
-
-        alert("Invalid Email or Password");
-
+        alert("Invalid Email or Password!");
     }
 }
 
