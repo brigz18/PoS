@@ -228,27 +228,11 @@ window.addEventListener('scroll', () => {
 });
 
 
-// =======================
-// Logout
-// =======================
 function handleLogout() {
-
-    const confirmLogout = confirm("Are you sure you want to logout?");
-
-    if (confirmLogout) {
-
-        // Hide dashboard
-        document.getElementById("dashboard").classList.remove("active");
-
-        // Show login page
-        document.getElementById("login-page").classList.add("active");
-
-        // Clear form
-        document.getElementById("email").value = "";
-        document.getElementById("password").value = "";
-
-    }
+    alert("Logout clicked");
+    window.location.replace("./index.html");
 }
+
 
 // =======================
 // Authentication
@@ -292,42 +276,21 @@ function handleLogin(event) {
         account.password === password
     );
 
-    if(user){
+    if (user) {
 
-        // Hide Login Page
-        document.getElementById("login-page").classList.remove("active");
-
-        // Hide Forgot Password Page
-        const forgotPage = document.getElementById("forgot-password-page");
-        if(forgotPage){
-            forgotPage.classList.remove("active");
-        }
-
-        // Show Dashboard + Main Content
-        document.getElementById("dashboard").classList.add("active");
-
-        // Update User Info
-        const userName = document.getElementById("user-name");
-        const userRole = document.getElementById("user-role");
-        const userInitials = document.getElementById("user-initials");
-
-        if(userName) userName.textContent = user.name;
-        if(userRole) userRole.textContent = user.role;
-
-        if(userInitials){
-            userInitials.textContent = user.name
-                .split(" ")
-                .map(word => word[0])
-                .join("")
-                .toUpperCase();
-        }
+        localStorage.setItem("userName", user.name);
+        localStorage.setItem("userRole", user.role);
 
         alert("Login Successful!");
 
-    }else{
+        window.location.href = "contains.html";
+
+    } else {
         alert("Invalid Email or Password!");
     }
 }
+
+
 
 
 function togglePassword() {
