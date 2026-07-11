@@ -228,25 +228,26 @@ window.addEventListener('scroll', () => {
 });
 
 
+// =======================
+// Logout
+// =======================
 function handleLogout() {
 
     const confirmLogout = confirm("Are you sure you want to logout?");
 
     if (confirmLogout) {
-        window.location.href = "index.html";
+
+        // Hide dashboard
+        document.getElementById("dashboard").classList.remove("active");
+
+        // Show login page
+        document.getElementById("login-page").classList.add("active");
+
+        // Clear form
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+
     }
-
-}
-
-function handleLogout() {
-    alert("Logout button clicked!");
-}
-
-// =======================
-// Logout
-// =======================
-function handleLogout() {
-    window.location.href = "index.html";
 }
 
 // =======================
@@ -259,7 +260,6 @@ function handleLogin(event) {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    // Demo Accounts
     const accounts = [
         {
             email: "admin@smartpos.com",
@@ -287,41 +287,79 @@ function handleLogin(event) {
         }
     ];
 
-    const user = accounts.find(
-        account =>
-            account.email === email &&
-            account.password === password
+    const user = accounts.find(account =>
+        account.email === email &&
+        account.password === password
     );
 
-    if (user) {
+    if(user){
 
-        // Hide all pages
-        document.querySelectorAll(".page").forEach(page => {
-            page.classList.remove("active");
-        });
+        // Hide Login Page
+        document.getElementById("login-page").classList.remove("active");
 
-        // Show Dashboard
+        // Hide Forgot Password Page
+        const forgotPage = document.getElementById("forgot-password-page");
+        if(forgotPage){
+            forgotPage.classList.remove("active");
+        }
+
+        // Show Dashboard + Main Content
         document.getElementById("dashboard").classList.add("active");
 
-        // Update User Info (if these elements exist)
+        // Update User Info
         const userName = document.getElementById("user-name");
         const userRole = document.getElementById("user-role");
         const userInitials = document.getElementById("user-initials");
 
-        if (userName) userName.textContent = user.name;
-        if (userRole) userRole.textContent = user.role;
-        if (userInitials) {
+        if(userName) userName.textContent = user.name;
+        if(userRole) userRole.textContent = user.role;
+
+        if(userInitials){
             userInitials.textContent = user.name
                 .split(" ")
-                .map(n => n[0])
+                .map(word => word[0])
                 .join("")
                 .toUpperCase();
         }
 
         alert("Login Successful!");
 
-    } else {
+    }else{
         alert("Invalid Email or Password!");
+    }
+}
+
+
+function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.getElementById("eye-icon");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+
+        eyeIcon.innerHTML = `
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+            <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+        `;
+    } else {
+        passwordInput.type = "password";
+
+        eyeIcon.innerHTML = `
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+        `;
+    }
+}
+
+function handleLogout() {
+
+    if(confirm("Are you sure you want to logout?")) {
+
+        document.getElementById("dashboard").classList.remove("active");
+
+        document.getElementById("login-page").classList.add("active");
     }
 }
 
