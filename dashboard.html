@@ -1,0 +1,2757 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartPOS - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="dashboard" class="page active">
+      <!-- =====================================================
+       SIDEBAR
+       ===================================================== -->
+      <aside id="sidebar" class="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="logo">
+            <span class="logo-text">SmartPOS</span>
+          </div>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            onclick="toggleSidebar(event)"
+            aria-label="Collapse sidebar"
+            aria-expanded="true"
+            title="Collapse sidebar"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- ===================================================
+         SIDEBAR NAVIGATION
+         =================================================== -->
+        <nav class="sidebar-nav" aria-label="Main navigation">
+          <!-- Dashboard -->
+          <a
+            href="#dashboard"
+            class="nav-item active"
+            data-page="dashboard"
+            data-permission="viewDashboard"
+            aria-current="page"
+            onclick="navigateTo('dashboard', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- POS -->
+          <a
+            href="#pos"
+            class="nav-item"
+            data-page="pos"
+            data-permission="usePOS"
+            onclick="navigateTo('pos', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              ></path>
+            </svg>
+            <span>POS Terminal</span>
+          </a>
+
+          <!-- Sales -->
+          <a
+            href="#sales"
+            class="nav-item"
+            data-page="sales"
+            data-permission="viewSalesHistory"
+            onclick="navigateTo('sales', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-1.1 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              ></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>Sales History</span>
+          </a>
+
+          <!-- Products -->
+          <a
+            href="#products"
+            class="nav-item"
+            data-page="products"
+            data-permission="manageProducts"
+            onclick="navigateTo('products', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+              ></path>
+            </svg>
+            <span>Products</span>
+          </a>
+
+          <!-- Inventory -->
+          <a
+            href="#inventory"
+            class="nav-item"
+            data-page="inventory"
+            data-permission="manageInventory"
+            onclick="navigateTo('inventory', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+            </svg>
+            <span>Inventory</span>
+          </a>
+
+          <!-- Customers -->
+          <a
+            href="#customers"
+            class="nav-item"
+            data-page="customers"
+            data-permission="manageCustomers"
+            onclick="navigateTo('customers', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Customers</span>
+          </a>
+
+          <!-- Suppliers -->
+          <a
+            href="#suppliers"
+            class="nav-item"
+            data-page="suppliers"
+            data-permission="manageSuppliers"
+            onclick="navigateTo('suppliers', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+            <span>Suppliers</span>
+          </a>
+
+          <!-- Employees -->
+          <a
+            href="#employees"
+            class="nav-item"
+            data-page="employees"
+            data-permission="manageEmployees"
+            onclick="navigateTo('employees', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            <span>Employees</span>
+          </a>
+
+          <!-- Finance -->
+          <a
+            href="#finance"
+            class="nav-item"
+            data-page="finance"
+            data-permission="viewFinance"
+            onclick="navigateTo('finance', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <line x1="12" y1="20" x2="12" y2="10"></line>
+              <line x1="18" y1="20" x2="18" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="16"></line>
+            </svg>
+            <span>Finance</span>
+          </a>
+
+          <!-- Settings -->
+          <a
+            href="#settings"
+            class="nav-item"
+            data-page="settings"
+            data-permission="always"
+            onclick="navigateTo('settings', event)"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 0 0 2.83 2 2 0 0 0 2.83 0l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0 1.51-1H21a2 2 0 0 0 2-2 2 2 0 0 0-2-2h-.09a1.65 1.65 0 0 0-1.51-1z"
+              ></path>
+            </svg>
+            <span>Settings</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <a href="#" class="nav-item logout-btn" onclick="handleLogout(event)">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <main id="main-content" class="main-content">
+        <header class="main-header">
+          <div class="search-bar">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9ca3af"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              id="global-search"
+              placeholder="Search products, customers..."
+              onkeydown="handleGlobalSearch(event)"
+            />
+          </div>
+          <div class="header-actions">
+            <button
+              type="button"
+              class="header-btn"
+              onclick="toggleTheme()"
+              aria-label="Toggle dark mode"
+              title="Toggle dark mode"
+            >
+              <svg
+                id="theme-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </button>
+            <div class="notification-wrapper">
+              <button
+                type="button"
+                class="header-btn notification-btn"
+                onclick="toggleNotifications()"
+                aria-label="Notifications"
+                title="Notifications"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span
+                  class="notification-badge"
+                  id="notification-badge"
+                  style="display: none"
+                  >0</span
+                >
+              </button>
+              <div class="notification-dropdown" id="notification-dropdown">
+                <div class="notification-dropdown-header">Low Stock Alerts</div>
+                <div id="notification-list" class="notification-list">
+                  <p class="loading-text">No alerts</p>
+                </div>
+              </div>
+            </div>
+            <div class="user-menu">
+              <div class="user-avatar"><span id="user-initials">--</span></div>
+              <div class="user-info">
+                <span class="user-name" id="user-name">&nbsp;</span>
+                <span class="user-role" id="user-role">&nbsp;</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dashboard -->
+        <div id="dashboard-content" class="page-content active">
+          <div class="page-header">
+            <div>
+              <h1>Dashboard</h1>
+              <p id="business-name-label">Welcome!</p>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Statistics -->
+          <div class="stats-grid" id="dashboard-stats-grid">
+            <!-- Revenue -->
+            <div class="stat-card">
+              <div class="stat-icon bg-primary">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path
+                    d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                  ></path>
+                </svg>
+              </div>
+
+              <div class="stat-info">
+                <div class="stat-value" id="stat-revenue">
+                  <div class="stat">
+                    <div class="stat__value">₱612,430.00</div>
+                    <div class="stat__delta stat__delta--up">
+                      ▲ 8.1% vs last month
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stat-label">Today's Revenue</div>
+              </div>
+            </div>
+
+            <!-- Orders -->
+            <div class="stat-card">
+              <div class="stat-icon bg-success">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path
+                    d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                  ></path>
+                </svg>
+              </div>
+
+              <div class="stat-info">
+                <div class="stat-value" id="stat-orders">
+                  <div class="stat">
+                    <div class="stat__value">1874</div>
+                    <div class="stat__delta text-muted">
+                      172 completed · 12 pending
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stat-label">Orders Today</div>
+              </div>
+            </div>
+
+            <!-- Profit -->
+            <div class="stat-card">
+              <div class="stat-icon bg-accent">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+              </div>
+
+              <div class="stat-info">
+                <div class="stat-value" id="stat-profit">
+                  <div class="stat">
+                    <div class="stat__value">₱14,220.00</div>
+                    <div class="stat__delta stat__delta--up">
+                      ▲ 36.7% margin
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stat-label">Today's Profit</div>
+              </div>
+            </div>
+
+            <!-- Products -->
+            <div class="stat-card">
+              <div class="stat-icon bg-gray">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                  ></path>
+                </svg>
+              </div>
+
+              <div class="stat-info">
+                <div class="stat-value" id="stat-products">
+                  <div class="stat">
+                    <div class="stat__value">₱248,910.00</div>
+                    <div class="stat__delta text-muted">
+                      1,204 units on hand
+                    </div>
+                    <div class="stat__delta stat__delta--down">
+                      5 low · 1 out of stock
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stat-label">Total Products</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button
+              class="quick-action-btn bg-primary"
+              onclick="navigateTo('card')"
+            >
+              New Sale
+            </button>
+            <button
+              class="quick-action-btn bg-success"
+              onclick="navigateTo('products')"
+            >
+              Manage Products
+            </button>
+            <button
+              class="quick-action-btn bg-accent"
+              onclick="navigateTo('card')"
+            >
+              Categorys
+            </button>
+            <button
+              class="quick-action-btn bg-gray"
+              onclick="navigateTo('finance')"
+            >
+              Finance
+            </button>
+          </div>
+        </div>
+        <!-- ===========================
+              Dashboard Charts
+            =========================== -->
+        <section id="sales-dashboard" class="grid-2">
+          <!-- Sales This Week -->
+          <div class="card">
+            <div class="card__head">
+              <div>
+                <div class="card__title">Sales this week</div>
+                <div class="text-xs text-muted">Gross sales per day</div>
+              </div>
+
+              <div class="legend">
+                <span>
+                  <i class="dot" style="background: var(--blue-600)"></i>
+                  Sales
+                </span>
+              </div>
+            </div>
+
+            <div class="card__body">
+              <div class="bars" id="salesChart"></div>
+            </div>
+          </div>
+
+          <!-- Sales by Category -->
+          <div class="card">
+            <div class="card__head">
+              <div class="card__title">Sales by Category</div>
+            </div>
+
+            <div class="card__body stack gap-4" id="categoryChart"></div>
+          </div>
+        </section>
+
+        <!-- ===========================
+            Dashboard Tables
+            =========================== -->
+        <section class="grid-2">
+          <!-- Recent Transactions -->
+          <div class="card">
+            <div class="card__head">
+              <div class="card__title">Recent Transactions</div>
+
+              <a href="#" class="btn btn--sm btn--ghost"> View All </a>
+            </div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Reference</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Method</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+
+                <tbody id="recentTransactions"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card__head">
+              <div class="card__title">Recent Activity</div>
+            </div>
+
+            <div class="card__body">
+              <div class="list" id="recentActivity"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- POS -->
+        <div class="pos">
+          <!-- LEFT: categories + favorites -->
+          <aside class="pos__aside">
+            <div class="stack gap-3">
+              <div class="input-icon">
+                <input
+                  class="input"
+                  id="posBarcode"
+                  placeholder="Scan barcode…"
+                  aria-label="Barcode scanner input"
+                />
+              </div>
+              <button class="cat-btn" id="posFavToggle">☆ Favorites</button>
+              <div class="nav-group__label" style="padding-left: 2px">
+                Categories
+              </div>
+              <div class="cat-list" id="posCategories"></div>
+            </div>
+          </aside>
+          <!-- CENTER: product grid -->
+          <section class="pos__main">
+            <div class="input-icon">
+              <input
+                class="input"
+                id="posSearch"
+                type="search"
+                placeholder="Search product name or SKU… (F2)"
+                aria-label="Search products"
+              />
+            </div>
+            <div class="product-grid" id="posGrid"></div>
+          </section>
+          <!-- RIGHT: cart -->
+          <aside class="pos__cart" aria-label="Shopping cart">
+            <div class="cart__head">
+              <div>
+                <div class="card__title">Current order</div>
+                <div class="text-xs text-muted">
+                  <span id="cartCount">0</span> item(s)
+                </div>
+              </div>
+              <button class="btn btn--sm btn--danger" id="btnClear">
+                Cancel
+              </button>
+            </div>
+            <div style="padding: 12px 18px 0">
+              <label class="label" for="cartCustomer">Customer</label>
+              <select class="select" id="cartCustomer"></select>
+            </div>
+            <div class="cart__items" id="cartItems"></div>
+            <div style="padding: 0 18px 12px">
+              <label class="label" for="discountInput">Discount (%)</label>
+              <input
+                class="input"
+                id="discountInput"
+                type="number"
+                min="0"
+                max="100"
+                value="0"
+              />
+            </div>
+            <div class="cart__totals">
+              <div class="cart__row">
+                <span class="text-muted">Subtotal</span
+                ><span id="cartSubtotal">₱0.00</span>
+              </div>
+              <div class="cart__row">
+                <span class="text-muted">Discount</span
+                ><span id="cartDiscount">−₱0.00</span>
+              </div>
+              <div class="cart__row">
+                <span class="text-muted">VAT (12%)</span
+                ><span id="cartTax">₱0.00</span>
+              </div>
+              <div class="cart__row cart__row--total">
+                <span>Total</span><span id="cartTotal">₱0.00</span>
+              </div>
+            </div>
+            <div class="cart__actions">
+              <div class="pay-methods" id="payMethods">
+                <button class="pay-method is-active" data-method="Cash">
+                  Cash
+                </button>
+                <button class="pay-method" data-method="Card">Card</button>
+                <button class="pay-method" data-method="GCash">GCash</button>
+                <button class="pay-method" data-method="Maya">Maya</button>
+              </div>
+              <div class="row gap-2">
+                <button class="btn btn--ghost grow" id="btnHold">Hold</button>
+                <button class="btn btn--ghost grow" id="btnResume">
+                  Resume
+                </button>
+              </div>
+              <button
+                class="btn btn--success btn--lg btn--block"
+                id="btnCheckout"
+                disabled
+                style="opacity: 0.55"
+              >
+                Complete payment (F4)
+              </button>
+            </div>
+          </aside>
+        </div>
+        <!-- RECEIPT MODAL -->
+        <div
+          class="modal"
+          id="receiptModal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="receiptTitle"
+          aria-hidden="true"
+        >
+          <div class="modal__panel">
+            <div class="modal__head no-print">
+              <h2 id="receiptTitle" style="font-size: 1.05rem">
+                Payment successful
+              </h2>
+              <button class="icon-btn" data-modal-close aria-label="Close">
+                ✕
+              </button>
+            </div>
+            <div class="modal__body" id="receiptBody"></div>
+            <div class="modal__foot no-print">
+              <button class="btn btn--ghost" id="btnEmail">
+                Email receipt
+              </button>
+              <button class="btn btn--ghost" id="btnPrint">
+                Print receipt
+              </button>
+              <button class="btn btn--primary" id="btnNewSale">New sale</button>
+            </div>
+          </div>
+        </div>
+        <!-- Sales History -->
+        <div id="sales-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Sales History</h1>
+              <p>Browse completed transactions</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="filters-row">
+              <div class="search-input">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9ca3af"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" /></svg
+                ><input
+                  type="text"
+                  placeholder="Search by receipt number..."
+                  id="sales-search"
+                  oninput="renderSalesTable()"
+                />
+              </div>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Receipt #</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Cashier</th>
+                  <th>Payment</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="sales-tbody">
+                <tr>
+                  <td colspan="7" class="loading-text">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div id="products-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Product Catalog</h1>
+              <p>
+                Create, edit and archive products, and monitor stock health at a
+                glance
+              </p>
+            </div>
+            <div class="row gap-2">
+              <button
+                class="btn btn-secondary"
+                onclick="openCategoryManageModal()"
+              >
+                Manage Categories
+              </button>
+              <button class="btn btn-primary" onclick="openProductModal()">
+                + Add Product
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="filters-row">
+              <div class="search-input">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9ca3af"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" /></svg
+                ><input
+                  type="text"
+                  placeholder="Search name, SKU or barcode..."
+                  id="product-search"
+                  oninput="renderProductsTable()"
+                />
+              </div>
+              <select
+                class="select"
+                id="product-category-filter"
+                style="width: auto"
+                onchange="renderProductsTable()"
+              >
+                <option value="all">All categories</option>
+              </select>
+              <select
+                class="select"
+                id="product-status-filter"
+                style="width: auto"
+                onchange="renderProductsTable()"
+              >
+                <option value="all">All statuses</option>
+                <option value="ok">In stock</option>
+                <option value="low">Low stock</option>
+                <option value="out">Out of stock</option>
+              </select>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Cost</th>
+                  <th>Price</th>
+                  <th>Margin</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+                <tr>
+                  <td colspan="8" class="loading-text">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div
+              class="card__head"
+              style="
+                border-bottom: none;
+                border-top: 1px solid var(--border-color);
+              "
+            >
+              <span class="text-sm text-muted" id="product-count"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCT MODAL -->
+        <div
+          class="modal"
+          id="productModal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="productModalTitle"
+          aria-hidden="true"
+        >
+          <div class="modal__panel">
+            <div class="modal__head">
+              <h2 id="productModalTitle" style="font-size: 1.05rem">
+                New product
+              </h2>
+              <button class="icon-btn" data-modal-close aria-label="Close">
+                ✕
+              </button>
+            </div>
+            <form id="productForm">
+              <div class="modal__body" style="display: grid; gap: 14px">
+                <div class="field">
+                  <label class="label" for="fName">Product name *</label
+                  ><input class="input" id="fName" name="name" required />
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                  "
+                >
+                  <div class="field">
+                    <label class="label" for="fSku">SKU *</label
+                    ><input class="input" id="fSku" name="sku" required />
+                  </div>
+                  <div class="field">
+                    <label class="label" for="fBarcode">Barcode</label
+                    ><input class="input" id="fBarcode" name="barcode" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="fCategory">Category</label
+                  ><select
+                    class="select"
+                    id="fCategory"
+                    name="category"
+                  ></select>
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                  "
+                >
+                  <div class="field">
+                    <label class="label" for="fCost">Cost price</label
+                    ><input
+                      class="input"
+                      id="fCost"
+                      name="cost"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                  <div class="field">
+                    <label class="label" for="fPrice">Selling price *</label
+                    ><input
+                      class="input"
+                      id="fPrice"
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                  "
+                >
+                  <div class="field">
+                    <label class="label" for="fStock">Stock quantity</label
+                    ><input
+                      class="input"
+                      id="fStock"
+                      name="stock"
+                      type="number"
+                      min="0"
+                    />
+                  </div>
+                  <div class="field">
+                    <label class="label" for="fMin">Minimum stock</label
+                    ><input
+                      class="input"
+                      id="fMin"
+                      name="minStock"
+                      type="number"
+                      min="0"
+                    />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="fDesc">Description</label>
+                  <textarea
+                    class="textarea"
+                    id="fDesc"
+                    name="description"
+                    rows="3"
+                  >
+                  </textarea>
+                </div>
+              </div>
+              <div class="modal__foot">
+                <button class="btn btn--ghost" type="button" data-modal-close>
+                  Cancel
+                </button>
+                <button class="btn btn--primary" type="submit">
+                  Save product
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="inventory-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Inventory</h1>
+              <p>Track stock levels and manage inventory movements</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAdjustModal()">
+              Adjust Stock
+            </button>
+          </div>
+          <div class="stats-grid small" id="inventory-stats-grid">
+            <div class="stat-card mini">
+              <div class="stat-value" id="inv-total-items">--</div>
+              <div class="stat-label">Total Items</div>
+            </div>
+            <div class="stat-card mini">
+              <div class="stat-value text-primary" id="inv-total-value">--</div>
+              <div class="stat-label">Total Value</div>
+            </div>
+            <div class="stat-card mini">
+              <div class="stat-value text-warning" id="inv-low-stock">--</div>
+              <div class="stat-label">Low Stock</div>
+            </div>
+            <div class="stat-card mini">
+              <div class="stat-value text-danger" id="inv-out-stock">--</div>
+              <div class="stat-label">Out of Stock</div>
+            </div>
+          </div>
+          <div class="tabs">
+            <button
+              class="tab-btn active"
+              data-tab="overview"
+              onclick="switchInventoryTab('overview')"
+            >
+              Overview
+            </button>
+            <button
+              class="tab-btn"
+              data-tab="movements"
+              onclick="switchInventoryTab('movements')"
+            >
+              Movements
+            </button>
+          </div>
+          <div class="card">
+            <div class="tab-content active" id="inventory-overview">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>In Stock</th>
+                    <th>Min Stock</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-tbody"></tbody>
+              </table>
+            </div>
+            <div class="tab-content" id="inventory-movements">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th>Reference</th>
+                    <th>By</th>
+                  </tr>
+                </thead>
+                <tbody id="movements-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customers -->
+        <div id="customers-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Customers</h1>
+              <p>Manage customer database and loyalty program</p>
+            </div>
+            <button class="btn btn-primary" onclick="openCustomerAddModal()">
+              + Add Customer
+            </button>
+          </div>
+          <div class="card">
+            <div class="search-input">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#9ca3af"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" /></svg
+              ><input
+                type="text"
+                placeholder="Search customers..."
+                id="customer-search"
+                oninput="renderCustomersGrid()"
+              />
+            </div>
+          </div>
+          <div class="customers-grid" id="customers-grid"></div>
+        </div>
+
+        <!-- Suppliers -->
+        <div id="suppliers-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Suppliers</h1>
+              <p>Manage supplier relationships</p>
+            </div>
+            <button class="btn btn-primary" onclick="openSupplierModal()">
+              + Add Supplier
+            </button>
+          </div>
+          <div class="card">
+            <div class="search-input">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#9ca3af"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" /></svg
+              ><input
+                type="text"
+                placeholder="Search suppliers..."
+                id="supplier-search"
+                oninput="renderSuppliersGrid()"
+              />
+            </div>
+          </div>
+          <div class="suppliers-grid" id="suppliers-grid"></div>
+        </div>
+
+        <!-- Employees (Business Owner Account Management) -->
+        <div id="employees-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Employees</h1>
+              <p>
+                Create and manage accounts for your Managers, Cashiers, and
+                Inventory Staff
+              </p>
+            </div>
+            <button class="btn btn-primary" onclick="openEmployeeModal()">
+              + Add Employee
+            </button>
+          </div>
+          <div class="stats-grid small">
+            <div class="stat-card mini">
+              <div class="stat-value" id="emp-total">--</div>
+              <div class="stat-label">Total Employees</div>
+            </div>
+            <div class="stat-card mini">
+              <div class="stat-value text-success" id="emp-active">--</div>
+              <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card mini">
+              <div class="stat-value" id="emp-limit">--</div>
+              <div class="stat-label">Plan Limit</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="filters-row">
+              <div class="search-input">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9ca3af"
+                  stroke-width="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" /></svg
+                ><input
+                  type="text"
+                  placeholder="Search employees..."
+                  id="employee-search"
+                  oninput="renderEmployeesTable()"
+                />
+              </div>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Role</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="employees-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-content" class="page-content">
+          <div class="page-header">
+            <h1>Settings</h1>
+            <p>Your account and business information</p>
+          </div>
+
+          <div class="card" id="subscription-status-card">
+            <h2 class="section-title">Subscription</h2>
+            <div class="subscription-status-row">
+              <div>
+                <div
+                  class="subscription-plan-label"
+                  id="subscription-plan-label"
+                >
+                  --
+                </div>
+                <div
+                  class="subscription-expiry-label"
+                  id="subscription-expiry-label"
+                >
+                  --
+                </div>
+              </div>
+              <span class="badge" id="subscription-status-badge">--</span>
+            </div>
+            <button
+              class="btn btn-secondary"
+              id="renew-now-btn"
+              onclick="openRenewFromSettings()"
+              style="display: none"
+            >
+              Renew Now
+            </button>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Business Information</h2>
+            <div
+              id="business-settings-alert"
+              class="alert alert-error hidden"
+            ></div>
+            <div class="form-group">
+              <label for="settings-business-name">Business Name</label>
+              <input type="text" class="input" id="settings-business-name" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settings-currency">Currency Symbol</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="settings-currency"
+                  maxlength="3"
+                />
+              </div>
+              <div class="form-group">
+                <label for="settings-tax-rate">Tax Rate (%)</label>
+                <input
+                  type="number"
+                  class="input"
+                  id="settings-tax-rate"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="settings-plan">Subscription Plan</label>
+              <input type="text" class="input" id="settings-plan" disabled />
+            </div>
+            <p class="settings-note" id="business-settings-note">
+              Business details are managed by the Owner. Contact support to
+              change your plan.
+            </p>
+            <button
+              class="btn btn-primary"
+              id="save-business-btn"
+              onclick="saveBusinessSettings()"
+              style="display: none"
+            >
+              Save Business Info
+            </button>
+            <hr class="divider" />
+            <h2 class="section-title">Change My Password</h2>
+            <div id="password-alert" class="alert hidden"></div>
+            <div class="form-group">
+              <label for="current-password">Current Password</label>
+              <input
+                type="password"
+                class="input"
+                id="current-password"
+                autocomplete="current-password"
+              />
+            </div>
+            <div class="form-group">
+              <label for="new-password">New Password</label>
+              <input
+                type="password"
+                class="input"
+                id="new-password"
+                autocomplete="new-password"
+              />
+            </div>
+            <button class="btn btn-primary" onclick="handleChangePassword()">
+              Update Password
+            </button>
+          </div>
+        </div>
+
+        <!-- Checkout Modal -->
+        <div id="checkout-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Payment</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('checkout-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="payment-total">
+                <span>Total Amount</span><span id="payment-total">0.00</span>
+              </div>
+              <div class="payment-methods">
+                <button
+                  class="payment-method active"
+                  data-method="cash"
+                  onclick="selectPaymentMethod(this)"
+                >
+                  Cash
+                </button>
+                <button
+                  class="payment-method"
+                  data-method="card"
+                  onclick="selectPaymentMethod(this)"
+                >
+                  Card
+                </button>
+                <button
+                  class="payment-method"
+                  data-method="gcash"
+                  onclick="selectPaymentMethod(this)"
+                >
+                  GCash
+                </button>
+                <button
+                  class="payment-method"
+                  data-method="maya"
+                  onclick="selectPaymentMethod(this)"
+                >
+                  Maya
+                </button>
+              </div>
+              <div class="form-group">
+                <label>Amount Received</label
+                ><input
+                  type="number"
+                  id="amount-received"
+                  class="input input-lg"
+                  placeholder="0.00"
+                  oninput="calculateChange()"
+                />
+              </div>
+              <div class="quick-amounts">
+                <button
+                  class="btn btn-secondary btn-sm"
+                  onclick="addQuickAmount(100)"
+                >
+                  +100
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  onclick="addQuickAmount(200)"
+                >
+                  +200
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  onclick="addQuickAmount(500)"
+                >
+                  +500
+                </button>
+                <button
+                  class="btn btn-primary btn-sm"
+                  onclick="setExactAmount()"
+                >
+                  Exact
+                </button>
+              </div>
+              <div class="change-display">
+                <span class="label">Change</span
+                ><span class="value" id="change-amount">0.00</span>
+              </div>
+              <div
+                id="checkout-alert"
+                class="alert alert-error hidden checkout-alert"
+              ></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('checkout-modal')"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-primary"
+                onclick="processPayment()"
+                id="process-payment-btn"
+              >
+                Complete Payment
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div id="receipt-modal" class="modal">
+          <div class="modal-content">
+            <div class="receipt-success">
+              <div class="success-icon">
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#10b981"
+                  stroke-width="2"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <h2>Payment Successful!</h2>
+            </div>
+            <div class="receipt-details">
+              <div class="receipt-row">
+                <span>Receipt #</span><span id="receipt-number">--</span>
+              </div>
+              <div class="receipt-row">
+                <span>Payment</span><span id="receipt-method">--</span>
+              </div>
+              <div class="receipt-divider"></div>
+              <div class="receipt-row">
+                <span>Subtotal</span><span id="receipt-subtotal">--</span>
+              </div>
+              <div class="receipt-row">
+                <span>Tax</span><span id="receipt-tax">--</span>
+              </div>
+              <div class="receipt-row total">
+                <span>Total</span><span id="receipt-total">--</span>
+              </div>
+              <div class="receipt-row">
+                <span>Amount Paid</span><span id="receipt-paid">--</span>
+              </div>
+              <div class="receipt-row">
+                <span>Change</span><span id="receipt-change">--</span>
+              </div>
+            </div>
+            <button
+              class="btn btn-primary btn-block btn-lg"
+              onclick="newTransaction()"
+            >
+              New Transaction
+            </button>
+          </div>
+        </div>
+
+        <!-- Customer Select Modal (POS) -->
+        <div id="customer-select-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Select Customer</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('customer-select-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="customer-list" id="customer-select-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Modal -->
+        <div id="product-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="product-modal-title">Add Product</h2>
+              <button class="modal-close" onclick="closeModal('product-modal')">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="product-id" />
+              <div class="form-group">
+                <label for="product-name">Product Name</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="product-name"
+                  placeholder="Enter product name"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="product-sku">SKU</label>
+                  <input
+                    type="text"
+                    class="input"
+                    id="product-sku"
+                    placeholder="Enter SKU"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="product-barcode">Barcode</label>
+                  <input
+                    type="text"
+                    class="input"
+                    id="product-barcode"
+                    placeholder="Enter barcode"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="product-category">Category</label>
+                <select class="input" id="product-category">
+                  <option value="">Select a category</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="product-cost">Cost Price</label>
+                  <input
+                    type="number"
+                    class="input"
+                    id="product-cost"
+                    placeholder="Enter cost price"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="product-price">Selling Price</label>
+                  <input
+                    type="number"
+                    class="input"
+                    id="product-price"
+                    placeholder="Enter selling price"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="product-stock">Stock</label>
+                  <input
+                    type="number"
+                    class="input"
+                    id="product-stock"
+                    placeholder="Enter stock quantity"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="product-min-stock">Min Stock</label>
+                  <input
+                    type="number"
+                    class="input"
+                    id="product-min-stock"
+                    placeholder="Enter minimum stock"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Unit</label
+                ><input
+                  type="text"
+                  class="input"
+                  id="product-unit"
+                  placeholder="piece, cup, kg..."
+                />
+              </div>
+              <div id="product-alert" class="alert alert-error hidden"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('product-modal')"
+              >
+                Cancel</button
+              ><button class="btn btn-primary" onclick="saveProduct()">
+                Save Product
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adjust Stock Modal -->
+        <div id="adjust-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Adjust Stock</h2>
+              <button class="modal-close" onclick="closeModal('adjust-modal')">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="adjust-product">Product</label>
+                <select class="input" id="adjust-product">
+                  <option value="">Select a product</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="adjust-type">Adjustment Type</label>
+                <select class="input" id="adjust-type">
+                  <option value="in">Stock In</option>
+                  <option value="out">Stock Out</option>
+                  <option value="adjustment">Correction</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="adjust-quantity">Quantity</label>
+                <input
+                  type="number"
+                  class="input"
+                  id="adjust-quantity"
+                  placeholder="Enter quantity"
+                />
+              </div>
+              <div class="form-group">
+                <label for="adjust-reference">Reference (optional)</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="adjust-reference"
+                  placeholder="Enter reference (optional)"
+                />
+              </div>
+              <div class="form-group">
+                <label for="adjust-notes">Notes (optional)</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="adjust-notes"
+                  placeholder="Enter notes (optional)"
+                />
+              </div>
+              <div id="adjust-alert" class="alert alert-error hidden"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('adjust-modal')"
+              >
+                Cancel</button
+              ><button class="btn btn-primary" onclick="saveStockAdjustment()">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Add/Edit Modal -->
+        <div id="customer-add-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="customer-modal-title">Add Customer</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('customer-add-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="customer-id" />
+              <div class="form-group">
+                <label for="customer-name">Full Name</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="customer-name"
+                  name="customer-name"
+                  placeholder="Enter full name"
+                  autocomplete="name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="customer-phone">Phone</label>
+                <input
+                  type="tel"
+                  class="input"
+                  id="customer-phone"
+                  name="customer-phone"
+                  placeholder="Enter phone number"
+                  autocomplete="tel"
+                />
+              </div>
+              <div class="form-group">
+                <label for="customer-email">Email</label>
+                <input
+                  type="email"
+                  class="input"
+                  id="customer-email"
+                  name="customer-email"
+                  placeholder="Enter email address"
+                  autocomplete="email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="customer-membership">Membership Tier</label>
+                <select
+                  class="input"
+                  id="customer-membership"
+                  name="customer-membership"
+                >
+                  <option value="silver">Silver</option>
+                  <option value="gold">Gold</option>
+                  <option value="platinum">Platinum</option>
+                </select>
+              </div>
+              <div id="customer-alert" class="alert alert-error hidden"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('customer-add-modal')"
+              >
+                Cancel</button
+              ><button class="btn btn-primary" onclick="saveCustomer()">
+                Save Customer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Supplier Add/Edit Modal -->
+        <div id="supplier-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="supplier-modal-title">Add Supplier</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('supplier-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="supplier-id" />
+              <div class="form-group">
+                <label for="supplier-name">Supplier / Contact Name</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="supplier-name"
+                  name="supplier-name"
+                  placeholder="Enter supplier or contact name"
+                  autocomplete="organization"
+                />
+              </div>
+              <div class="form-group">
+                <label for="supplier-company">Company</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="supplier-company"
+                  name="supplier-company"
+                  placeholder="Enter company name"
+                  autocomplete="organization"
+                />
+              </div>
+              <div class="form-group">
+                <label for="supplier-contact-person">Contact Person</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="supplier-contact-person"
+                  name="supplier-contact-person"
+                  placeholder="Enter contact person name"
+                  autocomplete="name"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="supplier-email">Email</label>
+                  <input
+                    type="email"
+                    class="input"
+                    id="supplier-email"
+                    name="supplier-email"
+                    placeholder="Enter supplier email"
+                    autocomplete="email"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="supplier-phone">Phone</label>
+                  <input
+                    type="tel"
+                    class="input"
+                    id="supplier-phone"
+                    name="supplier-phone"
+                    placeholder="Enter supplier phone number"
+                    autocomplete="tel"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="supplier-address">Address</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="supplier-address"
+                  name="supplier-address"
+                  placeholder="Enter supplier address"
+                  autocomplete="street-address"
+                />
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label"
+                  ><input type="checkbox" id="supplier-active" checked /><span
+                    >Active</span
+                  ></label
+                >
+              </div>
+              <div id="supplier-alert" class="alert alert-error hidden"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('supplier-modal')"
+              >
+                Cancel</button
+              ><button class="btn btn-primary" onclick="saveSupplier()">
+                Save Supplier
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employee Modal (Owner/Manager creates Manager/Cashier/Inventory Staff accounts) -->
+        <div id="employee-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="employee-modal-title">Add Employee</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('employee-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="employee-id" />
+              <div class="form-group">
+                <label for="employee-name">Full Name</label>
+                <input
+                  type="text"
+                  class="input"
+                  id="employee-name"
+                  name="employee-name"
+                  placeholder="Enter employee full name"
+                  autocomplete="name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="employee-email">Email Address</label>
+                <input
+                  type="email"
+                  class="input"
+                  id="employee-email"
+                  name="employee-email"
+                  placeholder="Enter employee email address"
+                  autocomplete="email"
+                />
+              </div>
+              <div class="form-group" id="employee-password-group">
+                <label>Temporary Password</label
+                ><input
+                  type="password"
+                  class="input"
+                  id="employee-password"
+                  placeholder="At least 6 characters"
+                />
+              </div>
+              <div class="form-group">
+                <label for="employee-role">Role</label>
+                <select
+                  class="input"
+                  id="employee-role"
+                  name="employee-role"
+                  onchange="applyRoleTemplateToPermissionCheckboxes()"
+                >
+                  <option value="manager">Manager</option>
+                  <option value="cashier">Cashier</option>
+                  <option value="inventory_staff">Inventory Staff</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="employee-phone">Phone (optional)</label>
+                <input
+                  type="tel"
+                  class="input"
+                  id="employee-phone"
+                  name="employee-phone"
+                  placeholder="Enter phone number (optional)"
+                  autocomplete="tel"
+                />
+              </div>
+              <div class="form-group">
+                <label>Permissions</label>
+                <p class="settings-note" style="margin-bottom: 0.5rem">
+                  Choosing a Role above fills in a typical starting point -
+                  check or uncheck anything below to customize exactly what this
+                  employee can see and do.
+                </p>
+                <div class="permissions-grid">
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-viewDashboard" /><span
+                      >View Dashboard</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-viewSalesHistory" /><span
+                      >View Sales History</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-usePOS" /><span
+                      >Use POS Terminal</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-manageProducts" /><span
+                      >Manage Products</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-manageInventory" /><span
+                      >Manage Inventory</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-manageCustomers" /><span
+                      >Manage Customers</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-manageSuppliers" /><span
+                      >Manage Suppliers</span
+                    ></label
+                  >
+                  <label class="permission-check"
+                    ><input type="checkbox" id="perm-manageEmployees" /><span
+                      >Manage Employees</span
+                    ></label
+                  >
+                </div>
+              </div>
+              <div id="employee-alert" class="alert alert-error hidden"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('employee-modal')"
+              >
+                Cancel</button
+              ><button class="btn btn-primary" onclick="saveEmployee()">
+                Save Employee
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reset Employee Password Modal -->
+        <div id="reset-password-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Reset Employee Password</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('reset-password-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="reset-password-employee-id" />
+              <p class="settings-note" id="reset-password-employee-name"></p>
+              <div class="form-group">
+                <label for="reset-password-new">New Temporary Password</label>
+                <input
+                  type="password"
+                  class="input"
+                  id="reset-password-new"
+                  placeholder="At least 6 characters"
+                />
+              </div>
+              <div
+                id="reset-password-alert"
+                class="alert alert-error hidden"
+              ></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('reset-password-modal')"
+              >
+                Cancel</button
+              ><button class="btn btn-primary" onclick="saveResetPassword()">
+                Reset Password
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subscription Expired / Renewal Modal - cannot be dismissed by
+         clicking outside or pressing Escape while the subscription is
+         expired; the only ways out are paying and renewing, or logging out. -->
+        <div id="renewal-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="renewal-modal-title">Subscription Expired</h2>
+            </div>
+            <div class="modal-body">
+              <p
+                class="settings-note"
+                id="renewal-modal-note"
+                style="margin-bottom: 1rem"
+              >
+                Your business's subscription has expired. Renew below to restore
+                access to SmartPOS &mdash; your data is safe and will be exactly
+                as you left it.
+              </p>
+              <div class="plan-summary-card">
+                <div class="plan-summary-row">
+                  <span class="plan-summary-name" id="renewal-plan-name"
+                    >Professional</span
+                  >
+                  <span class="plan-summary-price" id="renewal-plan-price"
+                    >$79<small>/month</small></span
+                  >
+                </div>
+              </div>
+              <div id="renewal-alert" class="alert alert-error hidden"></div>
+              <div class="alert payment-sandbox-notice">
+                This is a sandbox/demo payment form &mdash; no real charge
+                occurs.
+              </div>
+              <div
+                class="payment-methods payment-methods-select"
+                id="renewal-payment-methods"
+              >
+                <button
+                  type="button"
+                  class="payment-method active"
+                  data-method="gcash"
+                  onclick="selectRenewalMethod(this)"
+                >
+                  <span>GCash</span>
+                </button>
+                <button
+                  type="button"
+                  class="payment-method"
+                  data-method="maya"
+                  onclick="selectRenewalMethod(this)"
+                >
+                  <span>Maya</span>
+                </button>
+                <button
+                  type="button"
+                  class="payment-method"
+                  data-method="card"
+                  onclick="selectRenewalMethod(this)"
+                >
+                  <span>Card</span>
+                </button>
+              </div>
+              <div class="form-group">
+                <label for="renewal-payer-name">Full Name (Payer)</label
+                ><input type="text" class="input" id="renewal-payer-name" />
+              </div>
+              <div id="renewal-wallet-fields">
+                <div class="form-group">
+                  <label for="renewal-mobile">Mobile Number</label
+                  ><input
+                    type="tel"
+                    class="input"
+                    id="renewal-mobile"
+                    placeholder="09171234567"
+                  />
+                </div>
+              </div>
+              <div id="renewal-card-fields" class="hidden">
+                <div class="form-group">
+                  <label for="renewal-card-number">Card Number</label
+                  ><input
+                    type="text"
+                    class="input"
+                    id="renewal-card-number"
+                    placeholder="1234 5678 9012 3456"
+                    maxlength="19"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="renewal-card-expiry">Expiry (MM/YY)</label
+                    ><input
+                      type="text"
+                      class="input"
+                      id="renewal-card-expiry"
+                      placeholder="12/28"
+                      maxlength="5"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="renewal-card-cvv">CVV</label
+                    ><input
+                      type="text"
+                      class="input"
+                      id="renewal-card-cvv"
+                      placeholder="123"
+                      maxlength="4"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="handleLogout()"
+                id="renewal-logout-btn"
+              >
+                Logout instead
+              </button>
+              <button
+                class="btn btn-secondary hidden"
+                onclick="closeModal('renewal-modal')"
+                id="renewal-cancel-btn"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-primary"
+                onclick="handleRenewal()"
+                id="renewal-pay-btn"
+              >
+                Pay &amp; Renew
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Categories Modal -->
+        <div id="category-manage-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Manage Categories</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('category-manage-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="category-add-row">
+                <input
+                  type="text"
+                  class="input"
+                  id="new-category-name"
+                  placeholder="New category name"
+                />
+                <input
+                  type="color"
+                  class="input category-color-input"
+                  id="new-category-color"
+                  value="#3b82f6"
+                />
+                <button class="btn btn-primary btn-sm" onclick="saveCategory()">
+                  Add
+                </button>
+              </div>
+              <div
+                id="category-manage-alert"
+                class="alert alert-error hidden"
+              ></div>
+              <div class="category-manage-list" id="category-manage-list"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('category-manage-modal')"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="toast" class="toast"></div>
+
+        <!-- Finance & Analytics -->
+        <div id="finance-content" class="page-content">
+          <div class="page-header">
+            <div>
+              <h1>Finance &amp; Analytics</h1>
+              <p>
+                Profitability, liquidity, debt, and planning tools built from
+                your live sales and inventory data
+              </p>
+            </div>
+            <button
+              class="btn btn-secondary"
+              onclick="openFinanceInputsModal()"
+            >
+              Edit Financial Inputs
+            </button>
+          </div>
+
+          <div
+            class="alert alert-info"
+            id="finance-note"
+            style="display: block; margin-bottom: 16px"
+          >
+            Revenue, cost of goods sold and inventory value are calculated
+            automatically from your sales and products. Balance-sheet figures
+            (assets, liabilities, equity, expenses) aren't tracked by the POS
+            yet, so enter them once via
+            <strong>Edit Financial Inputs</strong> and they'll be reused across
+            every metric below. Figures are saved on this device.
+          </div>
+
+          <div class="tabs" id="finance-tabs">
+            <button
+              class="tab-btn active"
+              data-ftab="profitability"
+              onclick="switchFinanceTab('profitability')"
+            >
+              Profitability
+            </button>
+            <button
+              class="tab-btn"
+              data-ftab="liquidity"
+              onclick="switchFinanceTab('liquidity')"
+            >
+              Liquidity &amp; Debt
+            </button>
+            <button
+              class="tab-btn"
+              data-ftab="analysis"
+              onclick="switchFinanceTab('analysis')"
+            >
+              Business Analysis
+            </button>
+            <button
+              class="tab-btn"
+              data-ftab="planning"
+              onclick="switchFinanceTab('planning')"
+            >
+              Business Finance
+            </button>
+          </div>
+
+          <!-- Profitability -->
+          <div class="tab-content active" id="finance-profitability">
+            <div class="stats-grid" id="finance-profitability-grid"></div>
+            <div class="card">
+              <div class="card__head">
+                <div class="card__title">How these are calculated</div>
+              </div>
+              <div class="card__body finance-formula-list">
+                <div>
+                  <strong>Gross profit</strong> = Revenue − Cost of Goods Sold
+                </div>
+                <div>
+                  <strong>Net profit</strong> = Gross profit − Operating
+                  expenses − Interest + Other income − Other expenses
+                </div>
+                <div>
+                  <strong>Gross margin</strong> = Gross profit ÷ Revenue
+                </div>
+                <div><strong>Net margin</strong> = Net profit ÷ Revenue</div>
+                <div><strong>ROI</strong> = Net profit ÷ Total investment</div>
+                <div><strong>ROA</strong> = Net profit ÷ Total assets</div>
+                <div><strong>ROE</strong> = Net profit ÷ Total equity</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Liquidity & Debt -->
+          <div class="tab-content" id="finance-liquidity">
+            <div class="stats-grid" id="finance-liquidity-grid"></div>
+            <div class="card">
+              <div class="card__head">
+                <div class="card__title">How these are calculated</div>
+              </div>
+              <div class="card__body finance-formula-list">
+                <div>
+                  <strong>Current ratio</strong> = Current assets ÷ Current
+                  liabilities
+                </div>
+                <div>
+                  <strong>Quick ratio</strong> = (Current assets − Inventory
+                  value) ÷ Current liabilities
+                </div>
+                <div>
+                  <strong>Debt-to-equity</strong> = Total liabilities ÷ Total
+                  equity
+                </div>
+                <div>
+                  <strong>Interest coverage</strong> = EBIT ÷ Interest expense
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Analysis -->
+          <div class="tab-content" id="finance-analysis">
+            <div class="card">
+              <div class="card__head">
+                <div class="card__title">Break-even analysis</div>
+              </div>
+              <div class="card__body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="be-product"
+                      >Product (optional — leave blank to use catalog
+                      averages)</label
+                    >
+                    <select
+                      class="input"
+                      id="be-product"
+                      onchange="renderBreakEven()"
+                    >
+                      <option value="">All products (average)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="stats-grid small" id="finance-breakeven-grid"></div>
+              </div>
+            </div>
+            <div class="stats-grid" id="finance-analysis-grid"></div>
+            <div class="grid-2">
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Revenue by category</div>
+                </div>
+                <div
+                  class="card__body stack gap-3"
+                  id="finance-revenue-by-category"
+                ></div>
+              </div>
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Cost breakdown</div>
+                </div>
+                <div
+                  class="card__body stack gap-3"
+                  id="finance-cost-breakdown"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Finance (planning) -->
+          <div class="tab-content" id="finance-planning">
+            <div class="grid-2">
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Budgeting</div>
+                </div>
+                <div class="card__body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="budget-revenue-target"
+                        >Revenue target (this period)</label
+                      >
+                      <input
+                        class="input"
+                        id="budget-revenue-target"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="budget-expense-target"
+                        >Expense budget (this period)</label
+                      >
+                      <input
+                        class="input"
+                        id="budget-expense-target"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onclick="saveBudgetTargets()"
+                  >
+                    Save budget
+                  </button>
+                  <div
+                    id="finance-budget-summary"
+                    class="finance-formula-list"
+                    style="margin-top: 14px"
+                  ></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Forecasting</div>
+                </div>
+                <div class="card__body">
+                  <p class="text-muted text-sm">
+                    Linear trend projected from your recent daily sales.
+                  </p>
+                  <div
+                    id="finance-forecast-summary"
+                    class="finance-formula-list"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Cash-flow management</div>
+                </div>
+                <div class="card__body">
+                  <div class="form-group">
+                    <label for="cf-cash-on-hand">Current cash on hand</label>
+                    <input
+                      class="input"
+                      id="cf-cash-on-hand"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onclick="saveCashOnHand()"
+                  >
+                    Save
+                  </button>
+                  <div
+                    id="finance-cashflow-summary"
+                    class="finance-formula-list"
+                    style="margin-top: 14px"
+                  ></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Cost management</div>
+                  <button
+                    class="btn btn--sm btn--ghost"
+                    onclick="openAddCostItemPrompt()"
+                  >
+                    + Add cost
+                  </button>
+                </div>
+                <div class="card__body">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Cost item</th>
+                        <th>Monthly amount</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="finance-cost-items-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Working capital</div>
+                </div>
+                <div class="card__body" id="finance-working-capital"></div>
+              </div>
+              <div class="card">
+                <div class="card__head">
+                  <div class="card__title">Business planning — goals</div>
+                  <button
+                    class="btn btn--sm btn--ghost"
+                    onclick="openAddGoalPrompt()"
+                  >
+                    + Add goal
+                  </button>
+                </div>
+                <div
+                  class="card__body stack gap-3"
+                  id="finance-goals-list"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Inputs Modal (Finance & Analytics) -->
+        <div id="finance-inputs-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Financial Inputs</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('finance-inputs-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <p class="text-muted text-sm" style="margin-bottom: 12px">
+                These figures aren't produced by the POS itself (it doesn't keep
+                a full balance sheet), so enter your latest numbers here.
+                They're stored on this device and used across every Finance tab.
+              </p>
+              <div
+                id="finance-inputs-alert"
+                class="alert alert-error hidden"
+              ></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fi-total-assets">Total assets</label>
+                  <input
+                    class="input"
+                    id="fi-total-assets"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="fi-total-liabilities">Total liabilities</label>
+                  <input
+                    class="input"
+                    id="fi-total-liabilities"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fi-total-equity">Total equity</label>
+                  <input
+                    class="input"
+                    id="fi-total-equity"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="fi-total-investment"
+                    >Total investment (for ROI, optional)</label
+                  >
+                  <input
+                    class="input"
+                    id="fi-total-investment"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Defaults to total assets"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fi-current-assets">Current assets</label>
+                  <input
+                    class="input"
+                    id="fi-current-assets"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="fi-current-liabilities"
+                    >Current liabilities</label
+                  >
+                  <input
+                    class="input"
+                    id="fi-current-liabilities"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fi-interest-expense"
+                    >Interest expense (this period)</label
+                  >
+                  <input
+                    class="input"
+                    id="fi-interest-expense"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="fi-other-income"
+                    >Other income (this period)</label
+                  >
+                  <input
+                    class="input"
+                    id="fi-other-income"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fi-other-expenses"
+                    >Other expenses (this period)</label
+                  >
+                  <input
+                    class="input"
+                    id="fi-other-expenses"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="fi-fixed-costs"
+                    >Fixed costs (for break-even)</label
+                  >
+                  <input
+                    class="input"
+                    id="fi-fixed-costs"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <p class="text-muted text-sm">
+                Operating expenses are the sum of your itemized costs in
+                Business Finance → Cost management.
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('finance-inputs-modal')"
+              >
+                Cancel
+              </button>
+              <button class="btn btn-primary" onclick="saveFinanceInputs()">
+                Save Inputs
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
