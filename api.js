@@ -2,6 +2,20 @@
 // SmartPOS - API Client
 // Thin fetch() wrapper that talks to the Express backend.
 // =========================================
+//
+// New in this version (all additive — every existing call site keeps working
+// exactly as before):
+//   - Requests time out instead of hanging forever on a dead connection.
+//   - A single safe retry for read-only (GET) requests that fail purely on
+//     the network (never retries POST/PUT/DELETE, so nothing double-submits).
+//   - Two DOM events any page can listen for, so UI chrome (a top loading
+//     bar, a skeleton state, a toast) can react without api.js knowing
+//     anything about the UI:
+//       document.addEventListener('smartpos:request-start', () => ...)
+//       document.addEventListener('smartpos:request-end', () => ...)
+//   - Errors carry a `.status` (HTTP status, or 0 for network/timeout) and
+//     `.isNetworkError` flag, so calling code can tell "server said no"
+//     apart from "couldn't reach the server" without parsing the message.
 
 // IMPORTANT: this defaults to the backend's own address (port 5000).
 // This matters because the frontend can be opened in more than one way:
@@ -16,6 +30,8 @@
 //   <script>window.SMARTPOS_API_BASE_URL = 'https://your-api-domain.com/api';</script>
 const API_BASE_URL =
   window.SMARTPOS_API_BASE_URL || "http://localhost:5000/api";
+
+const REQUEST_TIMEOUT_MS = 15000;
 
 const TOKEN_KEY = "smartpos_token";
 const USER_KEY = "smartpos_user";
@@ -48,6 +64,42 @@ const Auth = {
   },
 };
 
+let inFlightCount = 0;
+function requestStarted() {
+  inFlightCount += 1;
+  if (inFlightCount === 1) {
+    document.dispatchEvent(new CustomEvent("smartpos:request-start"));
+  }
+}
+function requestFinished() {
+  inFlightCount = Math.max(0, inFlightCount - 1);
+  if (inFlightCount === 0) {
+    document.dispatchEvent(new CustomEvent("smartpos:request-end"));
+  }
+}
+
+function apiError(message, { status = 0, isNetworkError = false } = {}) {
+  const err = new Error(message);
+  err.status = status;
+  err.isNetworkError = isNetworkError;
+  return err;
+}
+
+async function doFetch(path, method, headers, body) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 /**
  * Core request helper. Automatically attaches the JWT (if present) and
  * parses JSON. Throws an Error with the server's message on failure.
@@ -58,15 +110,34 @@ async function apiRequest(path, { method = "GET", body, auth = true } = {}) {
     headers.Authorization = `Bearer ${Auth.getToken()}`;
   }
 
+  requestStarted();
   let response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  } catch (networkErr) {
-    throw new Error("Could not reach the server. Is the backend running?");
+    try {
+      response = await doFetch(path, method, headers, body);
+    } catch (networkErr) {
+      // One safe retry, only for idempotent reads, only on a genuine
+      // network failure (not a timeout the server is just slow on).
+      const isAbort = networkErr && networkErr.name === "AbortError";
+      if (!isAbort && method === "GET") {
+        try {
+          response = await doFetch(path, method, headers, body);
+        } catch (secondErr) {
+          throw secondErr;
+        }
+      } else {
+        throw networkErr;
+      }
+    }
+  } catch (finalNetworkErr) {
+    requestFinished();
+    const timedOut = finalNetworkErr && finalNetworkErr.name === "AbortError";
+    throw apiError(
+      timedOut
+        ? "The request timed out. Please check your connection and try again."
+        : "Could not reach the server. Is the backend running?",
+      { isNetworkError: true },
+    );
   }
 
   let data = null;
@@ -75,6 +146,8 @@ async function apiRequest(path, { method = "GET", body, auth = true } = {}) {
   } catch (e) {
     // no JSON body
   }
+
+  requestFinished();
 
   if (!response.ok) {
     if (response.status === 401 && auth) {
@@ -89,8 +162,11 @@ async function apiRequest(path, { method = "GET", body, auth = true } = {}) {
       // renewal modal instead of leaving the person stuck on a bare error.
       window.onSubscriptionExpired();
     }
-    throw new Error(
+    throw apiError(
       (data && data.message) || `Request failed (${response.status})`,
+      {
+        status: response.status,
+      },
     );
   }
 
