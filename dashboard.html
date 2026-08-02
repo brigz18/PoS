@@ -435,17 +435,13 @@
                   ></path>
                 </svg>
               </div>
-
               <div class="stat-info">
-                <div class="stat-value" id="stat-revenue">
-                  <div class="stat">
-                    <div class="stat__value">₱612,430.00</div>
-                    <div class="stat__delta stat__delta--up">
-                      ▲ 8.1% vs last month
-                    </div>
+                <div class="stat">
+                  <div class="stat__value" id="stat-revenue">₱0.00</div>
+                  <div class="stat__delta" id="stat-revenue-delta">
+                    No sales yet
                   </div>
                 </div>
-
                 <div class="stat-label">Today's Revenue</div>
               </div>
             </div>
@@ -468,17 +464,13 @@
                   ></path>
                 </svg>
               </div>
-
               <div class="stat-info">
-                <div class="stat-value" id="stat-orders">
-                  <div class="stat">
-                    <div class="stat__value">1874</div>
-                    <div class="stat__delta text-muted">
-                      172 completed · 12 pending
-                    </div>
+                <div class="stat">
+                  <div class="stat__value" id="stat-orders">0</div>
+                  <div class="stat__delta" id="stat-orders-delta">
+                    0 completed
                   </div>
                 </div>
-
                 <div class="stat-label">Orders Today</div>
               </div>
             </div>
@@ -498,17 +490,13 @@
                   <polyline points="17 6 23 6 23 12"></polyline>
                 </svg>
               </div>
-
               <div class="stat-info">
-                <div class="stat-value" id="stat-profit">
-                  <div class="stat">
-                    <div class="stat__value">₱14,220.00</div>
-                    <div class="stat__delta stat__delta--up">
-                      ▲ 36.7% margin
-                    </div>
+                <div class="stat">
+                  <div class="stat__value" id="stat-profit">₱0.00</div>
+                  <div class="stat__delta" id="stat-profit-delta">
+                    0.0% margin
                   </div>
                 </div>
-
                 <div class="stat-label">Today's Profit</div>
               </div>
             </div>
@@ -529,265 +517,261 @@
                   ></path>
                 </svg>
               </div>
-
               <div class="stat-info">
-                <div class="stat-value" id="stat-products">
-                  <div class="stat">
-                    <div class="stat__value">₱248,910.00</div>
-                    <div class="stat__delta text-muted">
-                      1,204 units on hand
-                    </div>
-                    <div class="stat__delta stat__delta--down">
-                      5 low · 1 out of stock
-                    </div>
+                <div class="stat">
+                  <div class="stat__value" id="stat-products">0</div>
+                  <div class="stat__delta" id="stat-products-delta">
+                    0 low · 0 out of stock
                   </div>
                 </div>
-
                 <div class="stat-label">Total Products</div>
               </div>
             </div>
           </div>
 
-          <div class="quick-actions">
-            <button
-              class="quick-action-btn bg-primary"
-              onclick="navigateTo('card')"
-            >
-              New Sale
-            </button>
-            <button
-              class="quick-action-btn bg-success"
-              onclick="navigateTo('products')"
-            >
-              Manage Products
-            </button>
-            <button
-              class="quick-action-btn bg-accent"
-              onclick="navigateTo('card')"
-            >
-              Categorys
-            </button>
-            <button
-              class="quick-action-btn bg-gray"
-              onclick="navigateTo('finance')"
-            >
-              Finance
-            </button>
-          </div>
+          <!-- Dashboard Charts -->
+          <section id="sales-dashboard" class="grid-2">
+            <div class="card">
+              <div class="card__head">
+                <div>
+                  <div class="card__title">Sales this week</div>
+                  <div class="text-xs text-muted">Gross sales per day</div>
+                </div>
+                <div class="legend">
+                  <span
+                    ><i class="dot" style="background: var(--blue-600)"></i>
+                    Sales</span
+                  >
+                </div>
+              </div>
+              <div class="card__body">
+                <div class="bars" id="salesChart"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card__head">
+                <div class="card__title">Sales by Category</div>
+                <div class="text-xs text-muted">Highest to lowest</div>
+              </div>
+              <div class="card__body stack gap-4" id="categoryChart"></div>
+            </div>
+          </section>
+
+          <!-- Dashboard Tables -->
+          <section class="grid-2">
+            <div class="card">
+              <div class="card__head">
+                <div class="card__title">Recent Transactions</div>
+                <a
+                  href="#"
+                  class="btn btn--sm btn--ghost"
+                  onclick="navigateTo('sales', event)"
+                  >View All</a
+                >
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Reference</th>
+                      <th>Customer</th>
+                      <th>Items</th>
+                      <th>Method</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentTransactions">
+                    <tr>
+                      <td colspan="7" class="loading-text">Loading...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card__head">
+                <div class="card__title">Recent Activity</div>
+                <div class="text-xs text-muted">Stock alerts</div>
+              </div>
+              <div class="card__body">
+                <div class="list" id="recentActivity"></div>
+              </div>
+            </div>
+          </section>
         </div>
-        <!-- ===========================
-              Dashboard Charts
-            =========================== -->
-        <section id="sales-dashboard" class="grid-2">
-          <!-- Sales This Week -->
-          <div class="card">
-            <div class="card__head">
-              <div>
-                <div class="card__title">Sales this week</div>
-                <div class="text-xs text-muted">Gross sales per day</div>
-              </div>
-
-              <div class="legend">
-                <span>
-                  <i class="dot" style="background: var(--blue-600)"></i>
-                  Sales
-                </span>
-              </div>
-            </div>
-
-            <div class="card__body">
-              <div class="bars" id="salesChart"></div>
-            </div>
-          </div>
-
-          <!-- Sales by Category -->
-          <div class="card">
-            <div class="card__head">
-              <div class="card__title">Sales by Category</div>
-            </div>
-
-            <div class="card__body stack gap-4" id="categoryChart"></div>
-          </div>
-        </section>
-
-        <!-- ===========================
-            Dashboard Tables
-            =========================== -->
-        <section class="grid-2">
-          <!-- Recent Transactions -->
-          <div class="card">
-            <div class="card__head">
-              <div class="card__title">Recent Transactions</div>
-
-              <a href="#" class="btn btn--sm btn--ghost"> View All </a>
-            </div>
-
-            <div class="table-wrap">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Reference</th>
-                    <th>Customer</th>
-                    <th>Items</th>
-                    <th>Method</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-
-                <tbody id="recentTransactions"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Recent Activity -->
-          <div class="card">
-            <div class="card__head">
-              <div class="card__title">Recent Activity</div>
-            </div>
-
-            <div class="card__body">
-              <div class="list" id="recentActivity"></div>
-            </div>
-          </div>
-        </section>
 
         <!-- POS -->
-        <div class="pos">
-          <!-- LEFT: categories + favorites -->
-          <aside class="pos__aside">
-            <div class="stack gap-3">
+        <div id="pos-content" class="page-content">
+          <div class="pos">
+            <!-- LEFT: categories + favorites -->
+            <aside class="pos__aside">
+              <div class="stack gap-3">
+                <div class="input-icon">
+                  <input
+                    class="input"
+                    id="posBarcode"
+                    placeholder="Scan barcode…"
+                    aria-label="Barcode scanner input"
+                  />
+                </div>
+                <button class="cat-btn" id="posFavToggle">☆ Favorites</button>
+                <div class="nav-group__label" style="padding-left: 2px">
+                  Categories
+                </div>
+                <div class="cat-list" id="posCategories"></div>
+              </div>
+            </aside>
+            <!-- CENTER: product grid -->
+            <section class="pos__main">
               <div class="input-icon">
                 <input
                   class="input"
-                  id="posBarcode"
-                  placeholder="Scan barcode…"
-                  aria-label="Barcode scanner input"
+                  id="posSearch"
+                  type="search"
+                  placeholder="Search product name or SKU… (F2)"
+                  aria-label="Search products"
                 />
               </div>
-              <button class="cat-btn" id="posFavToggle">☆ Favorites</button>
-              <div class="nav-group__label" style="padding-left: 2px">
-                Categories
+              <div class="product-grid" id="posGrid"></div>
+            </section>
+            <!-- RIGHT: cart -->
+            <aside class="pos__cart" aria-label="Shopping cart">
+              <div class="cart__head">
+                <div>
+                  <div class="card__title">Current order</div>
+                  <div class="text-xs text-muted">
+                    <span id="cartCount">0</span> item(s)
+                  </div>
+                </div>
+                <button class="btn btn--sm btn--danger" id="btnClear">
+                  Cancel
+                </button>
               </div>
-              <div class="cat-list" id="posCategories"></div>
-            </div>
-          </aside>
-          <!-- CENTER: product grid -->
-          <section class="pos__main">
-            <div class="input-icon">
-              <input
-                class="input"
-                id="posSearch"
-                type="search"
-                placeholder="Search product name or SKU… (F2)"
-                aria-label="Search products"
-              />
-            </div>
-            <div class="product-grid" id="posGrid"></div>
-          </section>
-          <!-- RIGHT: cart -->
-          <aside class="pos__cart" aria-label="Shopping cart">
-            <div class="cart__head">
-              <div>
-                <div class="card__title">Current order</div>
-                <div class="text-xs text-muted">
-                  <span id="cartCount">0</span> item(s)
+              <div style="padding: 12px 18px 0">
+                <label class="label" for="cartCustomer">Customer</label>
+                <select class="select" id="cartCustomer"></select>
+              </div>
+              <div class="cart__items" id="cartItems"></div>
+              <div style="padding: 0 18px 12px">
+                <label class="label" for="discountInput">Discount (%)</label>
+                <input
+                  class="input"
+                  id="discountInput"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value="0"
+                />
+              </div>
+              <div class="cart__totals">
+                <div class="cart__row">
+                  <span class="text-muted">Subtotal</span
+                  ><span id="cartSubtotal">₱0.00</span>
+                </div>
+                <div class="cart__row">
+                  <span class="text-muted">Discount</span
+                  ><span id="cartDiscount">−₱0.00</span>
+                </div>
+                <div class="cart__row">
+                  <span class="text-muted">VAT (12%)</span
+                  ><span id="cartTax">₱0.00</span>
+                </div>
+                <div class="cart__row cart__row--total">
+                  <span>Total</span><span id="cartTotal">₱0.00</span>
                 </div>
               </div>
-              <button class="btn btn--sm btn--danger" id="btnClear">
-                Cancel
-              </button>
-            </div>
-            <div style="padding: 12px 18px 0">
-              <label class="label" for="cartCustomer">Customer</label>
-              <select class="select" id="cartCustomer"></select>
-            </div>
-            <div class="cart__items" id="cartItems"></div>
-            <div style="padding: 0 18px 12px">
-              <label class="label" for="discountInput">Discount (%)</label>
-              <input
-                class="input"
-                id="discountInput"
-                type="number"
-                min="0"
-                max="100"
-                value="0"
-              />
-            </div>
-            <div class="cart__totals">
-              <div class="cart__row">
-                <span class="text-muted">Subtotal</span
-                ><span id="cartSubtotal">₱0.00</span>
-              </div>
-              <div class="cart__row">
-                <span class="text-muted">Discount</span
-                ><span id="cartDiscount">−₱0.00</span>
-              </div>
-              <div class="cart__row">
-                <span class="text-muted">VAT (12%)</span
-                ><span id="cartTax">₱0.00</span>
-              </div>
-              <div class="cart__row cart__row--total">
-                <span>Total</span><span id="cartTotal">₱0.00</span>
-              </div>
-            </div>
-            <div class="cart__actions">
-              <div class="pay-methods" id="payMethods">
-                <button class="pay-method is-active" data-method="Cash">
-                  Cash
-                </button>
-                <button class="pay-method" data-method="Card">Card</button>
-                <button class="pay-method" data-method="GCash">GCash</button>
-                <button class="pay-method" data-method="Maya">Maya</button>
-              </div>
-              <div class="row gap-2">
-                <button class="btn btn--ghost grow" id="btnHold">Hold</button>
-                <button class="btn btn--ghost grow" id="btnResume">
-                  Resume
+              <div class="cart__actions">
+                <div class="pay-methods" id="payMethods">
+                  <button class="pay-method is-active" data-method="Cash">
+                    Cash
+                  </button>
+                  <button class="pay-method" data-method="Card">Card</button>
+                  <button class="pay-method" data-method="GCash">GCash</button>
+                  <button class="pay-method" data-method="Maya">Maya</button>
+                </div>
+                <div class="row gap-2">
+                  <button class="btn btn--ghost grow" id="btnHold">Hold</button>
+                  <button class="btn btn--ghost grow" id="btnResume">
+                    Resume
+                  </button>
+                </div>
+                <button
+                  class="btn btn--success btn--lg btn--block"
+                  id="btnCheckout"
+                  disabled
+                  style="opacity: 0.55"
+                >
+                  Complete payment (F4)
                 </button>
               </div>
-              <button
-                class="btn btn--success btn--lg btn--block"
-                id="btnCheckout"
-                disabled
-                style="opacity: 0.55"
-              >
-                Complete payment (F4)
-              </button>
-            </div>
-          </aside>
+            </aside>
+          </div>
         </div>
         <!-- RECEIPT MODAL -->
-        <div
-          class="modal"
-          id="receiptModal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="receiptTitle"
-          aria-hidden="true"
-        >
-          <div class="modal__panel">
-            <div class="modal__head no-print">
-              <h2 id="receiptTitle" style="font-size: 1.05rem">
-                Payment successful
-              </h2>
-              <button class="icon-btn" data-modal-close aria-label="Close">
-                ✕
+        <div id="receipt-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Payment Successful</h2>
+              <button class="modal-close" onclick="newTransaction()">
+                &times;
               </button>
             </div>
-            <div class="modal__body" id="receiptBody"></div>
-            <div class="modal__foot no-print">
-              <button class="btn btn--ghost" id="btnEmail">
+            <div class="modal-body">
+              <div class="receipt-block">
+                <div class="row" style="justify-content: space-between">
+                  <span class="text-muted">Receipt #</span>
+                  <strong id="receipt-number">—</strong>
+                </div>
+                <div class="row" style="justify-content: space-between">
+                  <span class="text-muted">Payment method</span>
+                  <strong id="receipt-method">—</strong>
+                </div>
+                <hr
+                  style="
+                    border: none;
+                    border-top: 1px dashed var(--border-color);
+                    margin: 12px 0;
+                  "
+                />
+                <div class="cart__row">
+                  <span class="text-muted">Subtotal</span
+                  ><span id="receipt-subtotal">₱0.00</span>
+                </div>
+                <div class="cart__row">
+                  <span class="text-muted">Tax</span
+                  ><span id="receipt-tax">₱0.00</span>
+                </div>
+                <div class="cart__row cart__row--total">
+                  <span>Total</span><span id="receipt-total">₱0.00</span>
+                </div>
+                <div class="cart__row">
+                  <span class="text-muted">Amount paid</span
+                  ><span id="receipt-paid">₱0.00</span>
+                </div>
+                <div class="cart__row">
+                  <span class="text-muted">Change</span
+                  ><span id="receipt-change">₱0.00</span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer no-print">
+              <button class="btn btn-secondary" onclick="emailReceipt()">
                 Email receipt
               </button>
-              <button class="btn btn--ghost" id="btnPrint">
+              <button class="btn btn-secondary" onclick="printReceipt()">
                 Print receipt
               </button>
-              <button class="btn btn--primary" id="btnNewSale">New sale</button>
+              <button class="btn btn-primary" onclick="newTransaction()">
+                New sale
+              </button>
             </div>
           </div>
         </div>
+
         <!-- Sales History -->
         <div id="sales-content" class="page-content">
           <div class="page-header">
@@ -931,133 +915,177 @@
           </div>
         </div>
 
-        <!-- PRODUCT MODAL -->
-        <div
-          class="modal"
-          id="productModal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="productModalTitle"
-          aria-hidden="true"
-        >
-          <div class="modal__panel">
-            <div class="modal__head">
-              <h2 id="productModalTitle" style="font-size: 1.05rem">
-                New product
-              </h2>
-              <button class="icon-btn" data-modal-close aria-label="Close">
-                ✕
+        <!-- PRODUCT MODAL (replaces the old id="productModal" block entirely) -->
+        <div id="product-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 id="product-modal-title">Add Product</h2>
+              <button class="modal-close" onclick="closeModal('product-modal')">
+                &times;
               </button>
             </div>
-            <form id="productForm">
-              <div class="modal__body" style="display: grid; gap: 14px">
+            <div class="modal-body">
+              <div id="product-alert" class="alert alert-error hidden"></div>
+              <input type="hidden" id="product-id" />
+
+              <div class="field" style="margin-bottom: 14px">
+                <label class="label">Product image</label>
+                <div class="image-upload-row">
+                  <div class="image-preview" id="product-image-preview">📦</div>
+                  <div class="stack gap-2">
+                    <input
+                      type="file"
+                      id="product-image-input"
+                      accept="image/*"
+                      onchange="handleProductImageChange(event)"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-sm"
+                      onclick="removeProductImage()"
+                    >
+                      Remove image
+                    </button>
+                    <span class="text-xs text-muted"
+                      >JPG or PNG, under ~1MB works best.</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="product-name">Product name *</label>
+                <input class="input" id="product-name" required />
+              </div>
+              <div class="form-row">
                 <div class="field">
-                  <label class="label" for="fName">Product name *</label
-                  ><input class="input" id="fName" name="name" required />
-                </div>
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 14px;
-                  "
-                >
-                  <div class="field">
-                    <label class="label" for="fSku">SKU *</label
-                    ><input class="input" id="fSku" name="sku" required />
-                  </div>
-                  <div class="field">
-                    <label class="label" for="fBarcode">Barcode</label
-                    ><input class="input" id="fBarcode" name="barcode" />
-                  </div>
-                </div>
-                <div class="field">
-                  <label class="label" for="fCategory">Category</label
-                  ><select
-                    class="select"
-                    id="fCategory"
-                    name="category"
-                  ></select>
-                </div>
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 14px;
-                  "
-                >
-                  <div class="field">
-                    <label class="label" for="fCost">Cost price</label
-                    ><input
-                      class="input"
-                      id="fCost"
-                      name="cost"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-                  <div class="field">
-                    <label class="label" for="fPrice">Selling price *</label
-                    ><input
-                      class="input"
-                      id="fPrice"
-                      name="price"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      required
-                    />
-                  </div>
-                </div>
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 14px;
-                  "
-                >
-                  <div class="field">
-                    <label class="label" for="fStock">Stock quantity</label
-                    ><input
-                      class="input"
-                      id="fStock"
-                      name="stock"
-                      type="number"
-                      min="0"
-                    />
-                  </div>
-                  <div class="field">
-                    <label class="label" for="fMin">Minimum stock</label
-                    ><input
-                      class="input"
-                      id="fMin"
-                      name="minStock"
-                      type="number"
-                      min="0"
-                    />
-                  </div>
+                  <label class="label" for="product-sku">SKU *</label>
+                  <input class="input" id="product-sku" required />
                 </div>
                 <div class="field">
-                  <label class="label" for="fDesc">Description</label>
-                  <textarea
-                    class="textarea"
-                    id="fDesc"
-                    name="description"
-                    rows="3"
+                  <label class="label" for="product-barcode">Barcode</label>
+                  <input class="input" id="product-barcode" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="product-category">Category</label>
+                <select class="select" id="product-category"></select>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label class="label" for="product-cost">Cost price</label>
+                  <input
+                    class="input"
+                    id="product-cost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="field">
+                  <label class="label" for="product-price"
+                    >Selling price *</label
                   >
-                  </textarea>
+                  <input
+                    class="input"
+                    id="product-price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
                 </div>
               </div>
-              <div class="modal__foot">
-                <button class="btn btn--ghost" type="button" data-modal-close>
-                  Cancel
-                </button>
-                <button class="btn btn--primary" type="submit">
-                  Save product
-                </button>
+              <div class="form-row">
+                <div class="field">
+                  <label class="label" for="product-stock"
+                    >Stock quantity</label
+                  >
+                  <input
+                    class="input"
+                    id="product-stock"
+                    type="number"
+                    min="0"
+                  />
+                </div>
+                <div class="field">
+                  <label class="label" for="product-min-stock"
+                    >Minimum stock</label
+                  >
+                  <input
+                    class="input"
+                    id="product-min-stock"
+                    type="number"
+                    min="0"
+                  />
+                </div>
               </div>
-            </form>
+              <div class="field">
+                <label class="label" for="product-unit">Unit</label>
+                <input
+                  class="input"
+                  id="product-unit"
+                  placeholder="pc, pack, bottle..."
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('product-modal')"
+              >
+                Cancel
+              </button>
+              <button class="btn btn-primary" onclick="saveProduct()">
+                Save Product
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORY MANAGE MODAL -->
+        <div id="category-manage-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Manage Categories</h2>
+              <button
+                class="modal-close"
+                onclick="closeModal('category-manage-modal')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="category-alert" class="alert alert-error hidden"></div>
+              <div class="form-row">
+                <div class="field grow">
+                  <label class="label" for="new-category-name"
+                    >New category name</label
+                  >
+                  <input
+                    class="input"
+                    id="new-category-name"
+                    placeholder="e.g. Beverages"
+                  />
+                </div>
+              </div>
+              <button
+                class="btn btn-primary btn-sm"
+                style="margin-bottom: 16px"
+                onclick="saveCategory()"
+              >
+                + Add Category
+              </button>
+              <div id="category-list" class="stack gap-2"></div>
+            </div>
+            <div class="modal-footer">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('category-manage-modal')"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
 
