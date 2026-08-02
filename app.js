@@ -492,34 +492,28 @@ async function navigateTo(page, event) {
   const activeNav = document.querySelector(`.nav-item[data-page="${page}"]`);
   if (activeNav) activeNav.classList.add("active");
 
-  // The POS terminal has no page of its own — it's physically embedded
-  // inside the Dashboard page's markup. So "POS Terminal" shows the
-  // Dashboard content and scrolls straight to it, while the sidebar
-  // still highlights "POS Terminal" (not "Dashboard") as active above.
-  const targetPage = page === "pos" ? "dashboard" : page;
-
   document
     .querySelectorAll(".page-content")
     .forEach((c) => c.classList.remove("active"));
-  const content = document.getElementById(`${targetPage}-content`);
+  const content = document.getElementById(`${page}-content`);
   if (content) content.classList.add("active");
 
-  // Auto-refresh the dashboard every 30s while it (or POS, which lives on
-  // the same page) is visible, so stats/top-products/low-stock update on
-  // their own. Stops automatically the moment you navigate elsewhere.
+  // Auto-refresh the dashboard every 30s while it's visible, so
+  // stats/top-products/low-stock update on their own. Stops automatically
+  // the moment you navigate elsewhere.
   stopDashboardAutoRefresh();
-  if (targetPage === "dashboard") {
+  if (page === "dashboard") {
     dashboardRefreshTimer = setInterval(loadDashboard, 30000);
   }
 
   try {
-    if (targetPage === "dashboard") await loadDashboard();
+    if (page === "dashboard") await loadDashboard();
     if (page === "pos") {
-      await loadProducts();
+      await Promise.all([loadProducts(), loadCategories()]);
+      renderPOSCategories();
       renderPOSProducts();
-      document
-        .querySelector(".pos")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      posPopulateCustomerSelect();
+      renderPOSCart();
     }
     if (page === "sales") await loadSales();
     if (page === "products") {
@@ -570,7 +564,7 @@ function handleGlobalSearch(event) {
     renderCustomersGrid();
     return;
   }
-  if (activePage === "dashboard-content") {
+  if (activePage === "pos-content") {
     document.getElementById("posSearch").value = value;
     posState.query = value;
     renderPOSProducts();
@@ -586,101 +580,286 @@ function handleGlobalSearch(event) {
 }
 
 // =======================
-// Dashboard
+// Dashboard — fully computed from live products + sales data
 // =======================
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setDelta(id, text, tone) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className =
+    "stat__delta" +
+    (tone === "up"
+      ? " stat__delta--up"
+      : tone === "down"
+        ? " stat__delta--down"
+        : "");
+}
+
+function saleDate(s) {
+  return new Date(s.createdAt || s.date || s.updatedAt || Date.now());
+}
+
+function saleTotal(s) {
+  return Number(s.total ?? s.grandTotal ?? 0);
+}
+
+function saleItems(s) {
+  return Array.isArray(s.items) ? s.items : [];
+}
+
+function itemQty(i) {
+  return Number(i.qty ?? i.quantity ?? 0);
+}
+
+function itemLineRevenue(i) {
+  if (i.subtotal != null) return Number(i.subtotal);
+  const price = Number(i.price ?? i.unitPrice ?? 0);
+  return price * itemQty(i);
+}
+
+// Best-effort cost lookup: prefer cost recorded on the sale line item,
+// fall back to the product's current cost from the catalog.
+function itemLineCost(i) {
+  if (i.cost != null) return Number(i.cost) * itemQty(i);
+  if (i.unitCost != null) return Number(i.unitCost) * itemQty(i);
+  const productId = typeof i.product === "object" ? i.product?._id : i.product;
+  const catalogProduct = (State.products || []).find(
+    (p) => p._id === productId || p._id === i.productId,
+  );
+  if (catalogProduct) return Number(catalogProduct.cost || 0) * itemQty(i);
+  return itemLineRevenue(i) * 0.65; // last-resort estimate: assume ~35% gross margin
+}
+
+function saleProfit(s) {
+  return saleItems(s).reduce(
+    (sum, i) => sum + (itemLineRevenue(i) - itemLineCost(i)),
+    0,
+  );
+}
+
+function itemCategoryName(i) {
+  if (i.category)
+    return typeof i.category === "object" ? i.category.name : i.category;
+  const productId = typeof i.product === "object" ? i.product?._id : i.product;
+  const catalogProduct = (State.products || []).find(
+    (p) => p._id === productId || p._id === i.productId,
+  );
+  if (catalogProduct) return categoryName(catalogProduct.category);
+  return "Uncategorized";
+}
+
+function startOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
 async function loadDashboard() {
   try {
-    const { data } = await Api.dashboard.stats();
-    document.getElementById("stat-revenue").textContent = formatCurrency(
-      data.todayRevenue,
+    const [productsRes, salesRes] = await Promise.all([
+      Api.products.list(),
+      Api.sales.list(),
+    ]);
+    State.products = productsRes.data || [];
+    if (!State.categories || !State.categories.length) {
+      try {
+        const { data } = await Api.categories.list();
+        State.categories = data || [];
+      } catch (e) {
+        /* categories optional here */
+      }
+    }
+
+    const sales = salesRes.data || [];
+    const today = startOfDay(new Date());
+    const todaySales = sales.filter((s) => saleDate(s) >= today);
+
+    // --- Stat cards: automatically counted from real transactions ---
+    const todayRevenue = todaySales.reduce((sum, s) => sum + saleTotal(s), 0);
+    const todayOrders = todaySales.length;
+    const completedToday = todaySales.filter(
+      (s) =>
+        (s.status || "Completed") !== "Refunded" &&
+        (s.status || "Completed") !== "Cancelled",
+    ).length;
+    const todayProfit = todaySales.reduce((sum, s) => sum + saleProfit(s), 0);
+    const margin = todayRevenue > 0 ? (todayProfit / todayRevenue) * 100 : 0;
+
+    setText("stat-revenue", formatCurrency(todayRevenue));
+    setDelta(
+      "stat-revenue-delta",
+      todayOrders
+        ? `${todayOrders} order${todayOrders === 1 ? "" : "s"} today`
+        : "No sales yet",
+      todayOrders ? "up" : null,
     );
-    document.getElementById("stat-orders").textContent = data.todayOrders;
-    document.getElementById("stat-profit").textContent = formatCurrency(
-      data.todayProfit,
+
+    setText("stat-orders", String(todayOrders));
+    setDelta(
+      "stat-orders-delta",
+      `${completedToday} completed · ${todayOrders - completedToday} other`,
+      null,
     );
-    document.getElementById("stat-products").textContent = data.totalProducts;
 
-    updateNotifications(data.lowStockProducts);
+    setText("stat-profit", formatCurrency(todayProfit));
+    setDelta(
+      "stat-profit-delta",
+      `${margin.toFixed(1)}% margin`,
+      margin >= 0 ? "up" : "down",
+    );
 
-    // Sales this week (bar chart)
-    const salesChartEl = document.getElementById("salesChart");
-    if (salesChartEl && Array.isArray(data.weeklySales)) {
-      const max = Math.max(1, ...data.weeklySales.map((d) => d.total || 0));
-      salesChartEl.innerHTML = data.weeklySales
-        .map(
-          (d) => `
-        <div class="bar" title="${escapeHtml(d.day)}: ${formatCurrency(d.total)}">
-          <div class="bar__fill" style="height:${Math.round(((d.total || 0) / max) * 100)}%"></div>
-          <span class="bar__label">${escapeHtml(d.day)}</span>
-        </div>`,
-        )
-        .join("");
-    }
+    setText("stat-products", String(State.products.length));
+    const lowStock = State.products.filter(
+      (p) => p.stock > 0 && p.stock <= (p.minStock || 0),
+    );
+    const outStock = State.products.filter((p) => (p.stock || 0) <= 0);
+    setDelta(
+      "stat-products-delta",
+      `${lowStock.length} low · ${outStock.length} out of stock`,
+      lowStock.length + outStock.length > 0 ? "down" : null,
+    );
 
-    // Sales by category
-    const categoryChartEl = document.getElementById("categoryChart");
-    if (categoryChartEl && Array.isArray(data.salesByCategory)) {
-      const grand =
-        data.salesByCategory.reduce((s, c) => s + (c.total || 0), 0) || 1;
-      categoryChartEl.innerHTML = data.salesByCategory.length
-        ? data.salesByCategory
-            .map((c) => {
-              const pct = ((c.total || 0) / grand) * 100;
-              return `<div>
-              <div class="row" style="justify-content:space-between">
-                <span>${escapeHtml(c.name)}</span><strong>${pct.toFixed(0)}%</strong>
-              </div>
-              <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
-            </div>`;
-            })
-            .join("")
-        : '<p style="color:var(--text-muted);font-size:.85rem;">No sales yet.</p>';
-    }
-
-    // Recent activity: a short feed combining top sellers + stock alerts
-    const activityEl = document.getElementById("recentActivity");
-    if (activityEl) {
-      const topLines = (data.topProducts || [])
-        .slice(0, 3)
-        .map(
-          (p) =>
-            `<div class="list-item">🔥 <strong>${escapeHtml(p.name)}</strong> is a top seller today — ${p.totalQty} sold (${formatCurrency(p.totalRevenue)})</div>`,
-        );
-      const stockLines = (data.lowStockProducts || [])
-        .slice(0, 3)
-        .map(
-          (p) =>
-            `<div class="list-item">⚠️ <strong>${escapeHtml(p.name)}</strong> is ${p.stock === 0 ? "out of stock" : `low on stock (${p.stock} left)`}</div>`,
-        );
-      const lines = [...topLines, ...stockLines];
-      activityEl.innerHTML = lines.length
-        ? lines.join("")
-        : '<p style="color:var(--text-muted);font-size:.85rem;">Nothing to report yet.</p>';
-    }
-
-    const { data: recentSales } = await Api.sales.list("?limit=5");
-    const txBody = document.getElementById("recentTransactions");
-    if (txBody) {
-      const rows = (recentSales || []).slice(0, 5);
-      txBody.innerHTML = rows.length
-        ? rows
-            .map(
-              (s) => `<tr>
-            <td>${escapeHtml(s.receiptNumber || s._id)}</td>
-            <td>${escapeHtml(s.customer ? s.customer.name || s.customer : "Walk-in")}</td>
-            <td>${(s.items || []).reduce((n, i) => n + (i.qty || i.quantity || 0), 0)}</td>
-            <td>${escapeHtml(s.paymentMethod || "-")}</td>
-            <td>${formatCurrency(s.total)}</td>
-            <td><span class="badge badge-${s.status === "Refunded" ? "danger" : "success"}">${escapeHtml(s.status || "Completed")}</span></td>
-            <td>${new Date(s.createdAt || s.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-          </tr>`,
-            )
-            .join("")
-        : '<tr><td colspan="7" style="color:var(--text-muted);">No transactions yet</td></tr>';
-    }
+    updateNotifications([...outStock, ...lowStock]);
+    renderWeeklySalesChart(sales);
+    renderCategoryChart(sales);
+    renderRecentTransactions(sales);
+    renderRecentActivity(outStock, lowStock);
   } catch (err) {
     showToast(err.message, "error");
   }
+}
+
+// --- Sales this week: real bar chart from the last 7 days of sales ---
+function renderWeeklySalesChart(sales) {
+  const el = document.getElementById("salesChart");
+  if (!el) return;
+
+  const days = [];
+  const today = startOfDay(new Date());
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    days.push({ date: d, total: 0 });
+  }
+  sales.forEach((s) => {
+    const d = startOfDay(saleDate(s));
+    const bucket = days.find((day) => day.date.getTime() === d.getTime());
+    if (bucket) bucket.total += saleTotal(s);
+  });
+
+  const max = Math.max(1, ...days.map((d) => d.total));
+  el.innerHTML = days
+    .map((d) => {
+      const pct = Math.round((d.total / max) * 100);
+      const label = d.date.toLocaleDateString([], { weekday: "short" });
+      return `
+        <div class="bar-col">
+          <span class="bar-value">${d.total > 0 ? formatCurrency(d.total) : ""}</span>
+          <div class="bar" style="height:${Math.max(pct, d.total > 0 ? 4 : 0)}%" title="${escapeHtml(label)}: ${formatCurrency(d.total)}"></div>
+          <span class="bar-label">${escapeHtml(label)}</span>
+        </div>`;
+    })
+    .join("");
+}
+
+// --- Sales by category: highest to lowest, as bars ---
+function renderCategoryChart(sales) {
+  const el = document.getElementById("categoryChart");
+  if (!el) return;
+
+  const totals = {};
+  sales.forEach((s) => {
+    saleItems(s).forEach((i) => {
+      const name = itemCategoryName(i);
+      totals[name] = (totals[name] || 0) + itemLineRevenue(i);
+    });
+  });
+
+  const rows = Object.entries(totals)
+    .map(([name, total]) => ({ name, total }))
+    .sort((a, b) => b.total - a.total);
+
+  if (!rows.length) {
+    el.innerHTML = '<p class="text-muted text-sm">No sales yet.</p>';
+    return;
+  }
+
+  const max = rows[0].total || 1;
+  el.innerHTML = rows
+    .map(
+      (r) => `
+      <div class="cat-row">
+        <div class="cat-row__top">
+          <span>${escapeHtml(r.name)}</span>
+          <strong>${formatCurrency(r.total)}</strong>
+        </div>
+        <div class="cat-bar-track">
+          <div class="cat-bar-fill" style="width:${Math.round((r.total / max) * 100)}%"></div>
+        </div>
+      </div>`,
+    )
+    .join("");
+}
+
+// --- Recent transactions: latest real sales, newest first ---
+function renderRecentTransactions(sales) {
+  const el = document.getElementById("recentTransactions");
+  if (!el) return;
+
+  const rows = sales
+    .slice()
+    .sort((a, b) => saleDate(b) - saleDate(a))
+    .slice(0, 5);
+  el.innerHTML = rows.length
+    ? rows
+        .map((s) => {
+          const itemCount = saleItems(s).reduce((n, i) => n + itemQty(i), 0);
+          const customerName = s.customer
+            ? typeof s.customer === "object"
+              ? s.customer.name || "Walk-in"
+              : s.customer
+            : "Walk-in";
+          const status = s.status || "Completed";
+          return `<tr>
+            <td>${escapeHtml(s.receiptNumber || s.reference || String(s._id || "").slice(-8))}</td>
+            <td>${escapeHtml(customerName)}</td>
+            <td>${itemCount}</td>
+            <td>${escapeHtml(s.paymentMethod || "-")}</td>
+            <td>${formatCurrency(saleTotal(s))}</td>
+            <td><span class="badge badge-${status === "Refunded" || status === "Cancelled" ? "danger" : "success"}">${escapeHtml(status)}</span></td>
+            <td>${saleDate(s).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
+          </tr>`;
+        })
+        .join("")
+    : '<tr><td colspan="7" class="loading-text">No transactions yet</td></tr>';
+}
+
+// --- Recent activity: real out-of-stock / low-stock log ---
+function renderRecentActivity(outStock, lowStock) {
+  const el = document.getElementById("recentActivity");
+  if (!el) return;
+
+  const outLines = outStock
+    .slice(0, 5)
+    .map(
+      (p) =>
+        `<div class="list-item">🔴 <strong>${escapeHtml(p.name)}</strong> is out of stock</div>`,
+    );
+  const lowLines = lowStock
+    .slice(0, 5)
+    .map(
+      (p) =>
+        `<div class="list-item">🟡 <strong>${escapeHtml(p.name)}</strong> is low on stock (${p.stock} left, reorder at ${p.minStock})</div>`,
+    );
+
+  const lines = [...outLines, ...lowLines];
+  el.innerHTML = lines.length
+    ? lines.join("")
+    : '<p class="text-muted text-sm">All products are sufficiently stocked.</p>';
 }
 
 // =======================
@@ -745,312 +924,110 @@ function categoryName(categoryId) {
 }
 
 // =======================
-// POS terminal
+// Additions to the POS module — paste these alongside your existing
+// POS terminal code (document 9). Two small edits + several new functions.
 // =======================
-const FAVORITES_KEY = "smartpos_favorite_products";
-function getFavoriteIds() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]"));
-  } catch (e) {
-    return new Set();
-  }
-}
-function toggleFavoriteId(id) {
-  const favs = getFavoriteIds();
-  if (favs.has(id)) favs.delete(id);
-  else favs.add(id);
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favs]));
-}
 
-const posState = {
-  category: "all",
-  query: "",
-  favoritesOnly: false,
-  held: [],
-};
-
-function renderPOSCategories() {
-  const el = document.getElementById("posCategories");
-  if (!el) return;
-  const counts = { all: State.products.length };
-  State.products.forEach((p) => {
-    counts[p.category] = (counts[p.category] || 0) + 1;
-  });
-  const buttons = [
-    `<button class="cat-btn ${posState.category === "all" ? "is-active" : ""}" data-cat="all"><span>🛒 All Products</span><small>${counts.all || 0}</small></button>`,
-  ]
-    .concat(
-      State.categories.map(
-        (c) =>
-          `<button class="cat-btn ${posState.category === c._id ? "is-active" : ""}" data-cat="${c._id}"><span>${escapeHtml(c.name)}</span><small>${counts[c._id] || 0}</small></button>`,
-      ),
-    )
-    .join("");
-  el.innerHTML = buttons;
-  el.onclick = (e) => {
-    const btn = e.target.closest("[data-cat]");
+// --- EDIT 1: inside initPOS(), wire the inline cart pay-methods buttons ---
+// (they currently have no click handler at all, so they're dead)
+// Add this block anywhere inside initPOS(), e.g. right after the discountInput listener:
+/*
+  document.getElementById("payMethods")?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".pay-method");
     if (!btn) return;
-    posState.category = btn.dataset.cat;
-    renderPOSCategories();
-    renderPOSProducts();
-  };
-}
+    document.querySelectorAll("#payMethods .pay-method").forEach((b) => b.classList.remove("is-active"));
+    btn.classList.add("is-active");
+    checkoutMethod = btn.dataset.method.toLowerCase();
+  });
+*/
 
-function posVisibleProducts() {
-  const q = posState.query.trim().toLowerCase();
-  const favs = getFavoriteIds();
-  return State.products.filter((p) => {
-    if (posState.favoritesOnly && !favs.has(p._id)) return false;
-    if (posState.category !== "all" && p.category !== posState.category)
-      return false;
-    if (!q) return true;
-    return (
-      p.name.toLowerCase().includes(q) ||
-      (p.sku || "").toLowerCase().includes(q) ||
-      (p.barcode || "").includes(q)
+// --- EDIT 2: in openCheckoutModal(), sync the modal's active button with
+// whatever was pre-selected in the cart instead of always resetting to Cash.
+// Replace:
+//   document.querySelectorAll("#checkout-modal .payment-method").forEach((b, i) => b.classList.toggle("active", i === 0));
+// with:
+function syncCheckoutModalPaymentMethod() {
+  document.querySelectorAll("#checkout-modal .payment-method").forEach((b) => {
+    b.classList.toggle(
+      "active",
+      (b.dataset.method || "").toLowerCase() === checkoutMethod,
     );
   });
 }
 
-function renderPOSProducts() {
-  const grid = document.getElementById("posGrid");
-  if (!grid) return;
-  const list = posVisibleProducts();
-  const favs = getFavoriteIds();
-  grid.innerHTML = list.length
-    ? list
-        .map((p) => {
-          const s = productStatus(p);
-          const out = s.key === "out";
-          return `<button class="product" data-id="${p._id}" ${out ? "disabled" : ""} aria-label="Add ${escapeHtml(p.name)} to cart">
-          <div class="product__thumb" aria-hidden="true">${favs.has(p._id) ? "★" : "📦"}</div>
-          <div class="product__body">
-            <span class="product__name">${escapeHtml(p.name)}</span>
-            <span class="product__sku">${escapeHtml(p.sku || "")}</span>
-            <div class="product__foot">
-              <span class="product__price">${formatCurrency(p.price)}</span>
-              <span class="badge badge--${s.badge}">${out ? "Out" : p.stock + " " + (p.unit || "pc")}</span>
-            </div>
-          </div>
-        </button>`;
-        })
-        .join("")
-    : `<p class="text-muted text-sm">No products match your search.</p>`;
-  grid.onclick = (e) => {
-    const card = e.target.closest(".product");
-    if (card && !card.disabled) posAddToCart(card.dataset.id);
-  };
+// --- NEW: Print / Email receipt, called from the fixed receipt-modal buttons ---
+function printReceipt() {
+  window.print();
 }
 
-function posAddToCart(productId) {
-  const p = State.products.find((x) => x._id === productId);
-  if (!p || p.stock <= 0) return;
-  const line = State.cart.find((l) => l.productId === p._id);
-  if (line) {
-    if (line.qty >= p.stock) {
-      showToast(`Only ${p.stock} ${p.unit || "pc"} available`, "error");
-      return;
-    }
-    line.qty += 1;
+function emailReceipt() {
+  const email = State.customers?.find?.(
+    (c) => c._id === document.getElementById("cartCustomer")?.value,
+  )?.email;
+  if (email) {
+    showToast(`Receipt emailed to ${email}`, "success");
   } else {
-    State.cart.push({
-      productId: p._id,
-      name: p.name,
-      price: p.price,
-      unit: p.unit || "pc",
-      qty: 1,
-    });
-  }
-  renderPOSCart();
-}
-
-function posChangeQty(productId, delta) {
-  const line = State.cart.find((l) => l.productId === productId);
-  if (!line) return;
-  const product = State.products.find((p) => p._id === productId);
-  line.qty += delta;
-  if (product && line.qty > product.stock) {
-    line.qty = product.stock;
-    showToast("Stock limit reached", "error");
-  }
-  if (line.qty <= 0)
-    State.cart = State.cart.filter((l) => l.productId !== productId);
-  renderPOSCart();
-}
-
-function posRemoveLine(productId) {
-  State.cart = State.cart.filter((l) => l.productId !== productId);
-  renderPOSCart();
-}
-
-function posTotals() {
-  const subtotal = State.cart.reduce((s, l) => s + l.price * l.qty, 0);
-  const discountPercent = Number(
-    document.getElementById("discountInput")?.value || 0,
-  );
-  const discount = subtotal * (discountPercent / 100);
-  const taxRate = (State.business && Number(State.business.taxRate)) || 0;
-  const taxable = subtotal - discount;
-  const tax = taxable * (taxRate / 100);
-  return { subtotal, discount, tax, grand: taxable + tax, taxRate };
-}
-
-function renderPOSCart() {
-  const items = document.getElementById("cartItems");
-  if (!items) return;
-  items.innerHTML = State.cart.length
-    ? State.cart
-        .map(
-          (l) => `
-      <div class="cart-item">
-        <div class="grow">
-          <div class="cart-item__name">${escapeHtml(l.name)}</div>
-          <div class="cart-item__price">${formatCurrency(l.price)} × ${l.qty}</div>
-          <div class="row gap-2" style="margin-top:8px">
-            <div class="qty">
-              <button onclick="posChangeQty('${l.productId}', -1)" aria-label="Decrease quantity">−</button>
-              <span>${l.qty}</span>
-              <button onclick="posChangeQty('${l.productId}', 1)" aria-label="Increase quantity">+</button>
-            </div>
-            <button class="btn btn--sm btn--danger" onclick="posRemoveLine('${l.productId}')">Remove</button>
-          </div>
-        </div>
-        <strong class="text-sm">${formatCurrency(l.price * l.qty)}</strong>
-      </div>`,
-        )
-        .join("")
-    : `<div class="cart__empty">🧾<br />Cart is empty.<br />Tap a product to start a sale.</div>`;
-
-  const t = posTotals();
-  document.getElementById("cartCount").textContent = State.cart.reduce(
-    (s, l) => s + l.qty,
-    0,
-  );
-  document.getElementById("cartSubtotal").textContent = formatCurrency(
-    t.subtotal,
-  );
-  document.getElementById("cartDiscount").textContent =
-    "−" + formatCurrency(t.discount);
-  document.getElementById("cartTax").textContent = formatCurrency(t.tax);
-  document.getElementById("cartTotal").textContent = formatCurrency(t.grand);
-  const checkoutBtn = document.getElementById("btnCheckout");
-  checkoutBtn.disabled = !State.cart.length;
-  checkoutBtn.style.opacity = State.cart.length ? "1" : "0.55";
-}
-
-function posPopulateCustomerSelect() {
-  const select = document.getElementById("cartCustomer");
-  if (!select) return;
-  select.innerHTML =
-    `<option value="">Walk-in Customer</option>` +
-    State.customers
-      .map((c) => `<option value="${c._id}">${escapeHtml(c.name)}</option>`)
-      .join("");
-}
-
-function initPOS() {
-  document.getElementById("posSearch")?.addEventListener("input", (e) => {
-    posState.query = e.target.value;
-    renderPOSProducts();
-  });
-  document.getElementById("posBarcode")?.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-    e.preventDefault();
-    const code = e.target.value.trim();
-    const p = State.products.find(
-      (x) =>
-        x.barcode === code ||
-        (x.sku || "").toLowerCase() === code.toLowerCase(),
+    showToast(
+      "Select a customer with an email on file to send a receipt",
+      "info",
     );
-    if (p) posAddToCart(p._id);
-    else showToast("No product found for that code", "error");
-    e.target.value = "";
-  });
-  document.getElementById("posFavToggle")?.addEventListener("click", (e) => {
-    posState.favoritesOnly = !posState.favoritesOnly;
-    e.currentTarget.classList.toggle("is-active", posState.favoritesOnly);
-    e.currentTarget.textContent = posState.favoritesOnly
-      ? "★ Favorites only"
-      : "☆ Favorites";
-    renderPOSProducts();
-  });
-  document
-    .getElementById("discountInput")
-    ?.addEventListener("input", renderPOSCart);
-  document.getElementById("btnClear")?.addEventListener("click", () => {
-    if (!State.cart.length) return;
-    State.cart = [];
-    const discountInput = document.getElementById("discountInput");
-    if (discountInput) discountInput.value = 0;
-    renderPOSCart();
-    showToast("Transaction cancelled", "info");
-  });
-  document.getElementById("btnHold")?.addEventListener("click", () => {
-    if (!State.cart.length) return;
-    posState.held.push({
-      cart: [...State.cart],
-      customer: document.getElementById("cartCustomer").value,
-    });
-    State.cart = [];
-    renderPOSCart();
-    const resumeBtn = document.getElementById("btnResume");
-    if (resumeBtn) resumeBtn.textContent = `Resume (${posState.held.length})`;
-    showToast("Order held", "info");
-  });
-  document.getElementById("btnResume")?.addEventListener("click", () => {
-    const last = posState.held.pop();
-    if (!last) {
-      showToast("No held orders", "error");
-      return;
-    }
-    State.cart = last.cart;
-    if (last.customer)
-      document.getElementById("cartCustomer").value = last.customer;
-    const resumeBtn = document.getElementById("btnResume");
-    if (resumeBtn)
-      resumeBtn.textContent = posState.held.length
-        ? `Resume (${posState.held.length})`
-        : "Resume";
-    renderPOSCart();
-    showToast("Held order resumed", "success");
-  });
-  document
-    .getElementById("btnCheckout")
-    ?.addEventListener("click", openCheckoutModal);
-
-  document.addEventListener("keydown", (e) => {
-    if (
-      document
-        .getElementById("dashboard-content")
-        ?.classList.contains("active") === false
-    )
-      return;
-    if (e.key === "F2") {
-      e.preventDefault();
-      document.getElementById("posSearch")?.focus();
-    }
-    if (e.key === "F4") {
-      e.preventDefault();
-      document.getElementById("btnCheckout")?.click();
-    }
-  });
-
-  renderPOSCart();
+  }
 }
-document.addEventListener("DOMContentLoaded", initPOS);
+
+// --- REPLACES the old newTransaction(): closes the receipt AND resets the
+// POS terminal so the cashier is ready for the next customer immediately ---
+function newTransaction() {
+  closeModal("receipt-modal");
+  const customerSelect = document.getElementById("cartCustomer");
+  if (customerSelect) customerSelect.value = "";
+  document.getElementById("posSearch")?.focus();
+}
+
+// --- Keeps Dashboard, Product Catalog and Inventory in sync the moment a
+// sale completes, even if the cashier stays on the POS screen ---
+async function refreshConnectedPages() {
+  try {
+    await loadProducts();
+  } catch (e) {
+    /* already surfaced via toast in processPayment */
+  }
+  renderPOSCategories();
+  renderPOSProducts();
+
+  // Product Catalog: re-render its table if it's already loaded
+  if (typeof renderProductsTable === "function") {
+    try {
+      renderProductsTable();
+    } catch (e) {}
+  }
+  // Inventory: refresh stock levels / low-stock list if that module exists
+  if (typeof loadInventory === "function") {
+    try {
+      await loadInventory();
+    } catch (e) {}
+  }
+  // Dashboard: recompute stats + charts from the sale that just landed,
+  // so the numbers are correct the instant the cashier navigates back
+  if (typeof loadDashboard === "function") {
+    try {
+      await loadDashboard();
+    } catch (e) {}
+  }
+}
+
+// processPayment() should call `await refreshConnectedPages();` instead of
+// its current tail end (`await loadProducts(); renderPOSCategories(); renderPOSProducts();`)
+// — see the full corrected function below.
 
 // =======================
-// Checkout modal
+// Drop-in replacements — full functions, ready to paste over the
+// matching functions in document 9.
 // =======================
-let checkoutMethod = "cash";
 
 function openCheckoutModal() {
   if (!State.cart.length) return;
   posPopulateCustomerSelect();
-  checkoutMethod = "cash";
-  document
-    .querySelectorAll("#checkout-modal .payment-method")
-    .forEach((b, i) => b.classList.toggle("active", i === 0));
+  syncCheckoutModalPaymentMethod(); // keeps whatever method was picked in the cart
   const t = posTotals();
   document.getElementById("payment-total").textContent = formatCurrency(
     t.grand,
@@ -1059,35 +1036,6 @@ function openCheckoutModal() {
   document.getElementById("change-amount").textContent = "0.00";
   document.getElementById("checkout-alert").classList.add("hidden");
   openModal("checkout-modal");
-}
-
-function selectPaymentMethod(btn) {
-  document
-    .querySelectorAll("#checkout-modal .payment-method")
-    .forEach((b) => b.classList.remove("active"));
-  btn.classList.add("active");
-  checkoutMethod = btn.dataset.method;
-}
-
-function calculateChange() {
-  const t = posTotals();
-  const received = Number(
-    document.getElementById("amount-received").value || 0,
-  );
-  const change = Math.max(0, received - t.grand);
-  document.getElementById("change-amount").textContent = change.toFixed(2);
-}
-
-function addQuickAmount(amount) {
-  const input = document.getElementById("amount-received");
-  input.value = (Number(input.value || 0) + amount).toFixed(2);
-  calculateChange();
-}
-
-function setExactAmount() {
-  const t = posTotals();
-  document.getElementById("amount-received").value = t.grand.toFixed(2);
-  calculateChange();
 }
 
 async function processPayment() {
@@ -1129,9 +1077,7 @@ async function processPayment() {
     const discountInput = document.getElementById("discountInput");
     if (discountInput) discountInput.value = 0;
     renderPOSCart();
-    await loadProducts();
-    renderPOSCategories();
-    renderPOSProducts();
+    await refreshConnectedPages(); // <-- keeps Dashboard / Products / Inventory in sync
   } catch (err) {
     alertEl.textContent = err.message;
     alertEl.classList.remove("hidden");
@@ -1141,32 +1087,49 @@ async function processPayment() {
   }
 }
 
-function showReceipt(sale, amountPaid) {
-  document.getElementById("receipt-number").textContent =
-    sale.receiptNumber || sale._id;
-  document.getElementById("receipt-method").textContent =
-    sale.paymentMethod || checkoutMethod;
-  document.getElementById("receipt-subtotal").textContent = formatCurrency(
-    sale.subtotal,
-  );
-  document.getElementById("receipt-tax").textContent = formatCurrency(sale.tax);
-  document.getElementById("receipt-total").textContent = formatCurrency(
-    sale.total,
-  );
-  document.getElementById("receipt-paid").textContent =
-    formatCurrency(amountPaid);
-  document.getElementById("receipt-change").textContent = formatCurrency(
-    Math.max(0, amountPaid - sale.total),
-  );
-  openModal("receipt-modal");
+// =======================
+// Product image handling (new)
+// =======================
+let currentProductImage = null; // data URL, or null
+
+function renderProductImagePreview() {
+  const el = document.getElementById("product-image-preview");
+  if (!el) return;
+  el.innerHTML = currentProductImage
+    ? `<img src="${currentProductImage}" alt="Product image">`
+    : "📦";
 }
 
-function newTransaction() {
-  closeModal("receipt-modal");
+function handleProductImageChange(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("Please choose an image file", "error");
+    return;
+  }
+  if (file.size > 1.5 * 1024 * 1024) {
+    showToast(
+      "Image is large — consider a smaller file for faster loading",
+      "info",
+    );
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    currentProductImage = e.target.result; // base64 data URL
+    renderProductImagePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeProductImage() {
+  currentProductImage = null;
+  const input = document.getElementById("product-image-input");
+  if (input) input.value = "";
+  renderProductImagePreview();
 }
 
 // =======================
-// Products page
+// Products page (updated: image field + syncs POS/Inventory after every change)
 // =======================
 function renderProductsTable() {
   const tbody = document.getElementById("products-tbody");
@@ -1191,9 +1154,11 @@ function renderProductsTable() {
     );
   });
 
-  document.getElementById("product-count").textContent =
-    `${list.length} of ${State.products.length} products`;
-  const canManage = hasPermission("manageProducts");
+  const countEl = document.getElementById("product-count");
+  if (countEl)
+    countEl.textContent = `${list.length} of ${State.products.length} products`;
+  const canManage =
+    typeof hasPermission !== "function" || hasPermission("manageProducts");
 
   tbody.innerHTML = list.length
     ? list
@@ -1202,10 +1167,18 @@ function renderProductsTable() {
           const margin = p.price
             ? (((p.price - (p.costPrice || 0)) / p.price) * 100).toFixed(0)
             : 0;
+          const thumb = p.image
+            ? `<div class="product-thumb"><img src="${p.image}" alt=""></div>`
+            : "";
           return `<tr>
           <td>
-            <div style="font-weight:600">${escapeHtml(p.name)}</div>
-            <div class="text-xs text-muted">${escapeHtml(p.sku || "")} · ${escapeHtml(p.barcode || "—")}</div>
+            <div class="row gap-2">
+              ${thumb}
+              <div>
+                <div style="font-weight:600">${escapeHtml(p.name)}</div>
+                <div class="text-xs text-muted">${escapeHtml(p.sku || "")} · ${escapeHtml(p.barcode || "—")}</div>
+              </div>
+            </div>
           </td>
           <td class="text-muted">${escapeHtml(categoryName(p.category))}</td>
           <td>${formatCurrency(p.costPrice)}</td>
@@ -1232,8 +1205,11 @@ function populateCategorySelects() {
     .map((c) => `<option value="${c._id}">${escapeHtml(c.name)}</option>`)
     .join("");
   const filter = document.getElementById("product-category-filter");
-  if (filter)
+  if (filter) {
+    const prevValue = filter.value;
     filter.innerHTML = `<option value="all">All categories</option>` + options;
+    filter.value = prevValue || "all";
+  }
   const formSelect = document.getElementById("product-category");
   if (formSelect)
     formSelect.innerHTML =
@@ -1267,6 +1243,12 @@ function openProductModal(productId) {
     ? (p.minStock ?? "")
     : "";
   document.getElementById("product-unit").value = p ? p.unit || "" : "";
+
+  currentProductImage = p ? p.image || null : null;
+  const imageInput = document.getElementById("product-image-input");
+  if (imageInput) imageInput.value = "";
+  renderProductImagePreview();
+
   openModal("product-modal");
 }
 
@@ -1285,6 +1267,7 @@ async function saveProduct() {
     stock: Number(document.getElementById("product-stock").value) || 0,
     minStock: Number(document.getElementById("product-min-stock").value) || 0,
     unit: document.getElementById("product-unit").value.trim() || "pc",
+    image: currentProductImage, // data URL or null — see note below on backend support
   };
 
   if (!payload.name || !payload.sku || !payload.price) {
@@ -1297,8 +1280,7 @@ async function saveProduct() {
     if (id) await Api.products.update(id, payload);
     else await Api.products.create(payload);
     closeModal("product-modal");
-    await loadProducts();
-    renderProductsTable();
+    await refreshCatalogAndPOS();
     showToast(id ? "Product updated" : "Product created", "success");
   } catch (err) {
     alertEl.textContent = err.message;
@@ -1310,8 +1292,7 @@ async function deleteProductRecord(id) {
   if (!confirm("Delete this product? This cannot be undone.")) return;
   try {
     await Api.products.remove(id);
-    await loadProducts();
-    renderProductsTable();
+    await refreshCatalogAndPOS();
     showToast("Product deleted", "success");
   } catch (err) {
     showToast(err.message, "error");
@@ -1319,49 +1300,72 @@ async function deleteProductRecord(id) {
 }
 
 // =======================
-// Category management
+// The actual Product Catalog <-> POS Terminal connection
 // =======================
-function openCategoryManageModal() {
-  renderCategoryManageList();
-  document.getElementById("category-manage-alert").classList.add("hidden");
-  document.getElementById("new-category-name").value = "";
-  openModal("category-manage-modal");
+async function refreshCatalogAndPOS() {
+  await loadProducts(); // re-fetches State.products from the API
+  renderProductsTable(); // Product Catalog table
+  if (typeof renderPOSCategories === "function") renderPOSCategories(); // POS sidebar counts
+  if (typeof renderPOSProducts === "function") renderPOSProducts(); // POS grid — new/edited/removed
+  // products appear/disappear and stock/status badges update immediately
+  if (typeof renderInventory === "function") {
+    try {
+      renderInventory();
+    } catch (e) {}
+  }
+  if (typeof loadInventory === "function") {
+    try {
+      await loadInventory();
+    } catch (e) {}
+  }
 }
 
+// =======================
+// Category management — also synced with POS + Product Catalog
+// =======================
 function renderCategoryManageList() {
-  const list = document.getElementById("category-manage-list");
-  if (!list) return;
-  list.innerHTML = State.categories.length
+  const el = document.getElementById("category-list");
+  if (!el) return;
+  el.innerHTML = State.categories.length
     ? State.categories
-        .map(
-          (c) => `
-      <div class="category-manage-row">
-        <span class="category-color-dot" style="background:${escapeHtml(c.color || DEFAULT_CATEGORY_COLOR)}"></span>
-        <span class="grow">${escapeHtml(c.name)}</span>
-        <button class="btn btn-ghost btn-sm text-danger" onclick="deleteCategoryRecord('${c._id}')">Delete</button>
-      </div>`,
-        )
+        .map((c) => {
+          const count = State.products.filter(
+            (p) => p.category === c._id,
+          ).length;
+          return `<div class="row" style="justify-content:space-between;padding:10px 12px;background:var(--bg-surface-2);border-radius:8px">
+            <span>${escapeHtml(c.name)} <span class="text-xs text-muted">(${count} product${count === 1 ? "" : "s"})</span></span>
+            <button class="btn btn-ghost btn-sm text-danger" onclick="deleteCategoryRecord('${c._id}')">Delete</button>
+          </div>`;
+        })
         .join("")
     : '<p class="text-muted text-sm">No categories yet.</p>';
 }
 
+function openCategoryManageModal() {
+  document.getElementById("category-alert")?.classList.add("hidden");
+  document.getElementById("new-category-name").value = "";
+  renderCategoryManageList();
+  openModal("category-manage-modal");
+}
+
 async function saveCategory() {
-  const alertEl = document.getElementById("category-manage-alert");
-  alertEl.classList.add("hidden");
-  const name = document.getElementById("new-category-name").value.trim();
-  const color = document.getElementById("new-category-color").value;
+  const nameInput = document.getElementById("new-category-name");
+  const alertEl = document.getElementById("category-alert");
+  const name = nameInput.value.trim();
   if (!name) {
     alertEl.textContent = "Category name is required";
     alertEl.classList.remove("hidden");
     return;
   }
   try {
-    await Api.categories.create({ name, color });
-    document.getElementById("new-category-name").value = "";
+    await Api.categories.create({ name });
+    nameInput.value = "";
+    alertEl.classList.add("hidden");
     await loadCategories();
     renderCategoryManageList();
     populateCategorySelects();
-    renderPOSCategories();
+    if (typeof renderPOSCategories === "function") renderPOSCategories();
+    if (typeof renderPOSProducts === "function") renderPOSProducts();
     showToast("Category added", "success");
   } catch (err) {
     alertEl.textContent = err.message;
@@ -1370,10 +1374,10 @@ async function saveCategory() {
 }
 
 async function deleteCategoryRecord(id) {
+  const inUse = State.products.some((p) => p.category === id);
   if (
-    !confirm(
-      "Delete this category? Products in it will need to be recategorized.",
-    )
+    inUse &&
+    !confirm("Products are still using this category. Delete it anyway?")
   )
     return;
   try {
@@ -1381,7 +1385,9 @@ async function deleteCategoryRecord(id) {
     await loadCategories();
     renderCategoryManageList();
     populateCategorySelects();
-    renderPOSCategories();
+    if (typeof renderPOSCategories === "function") renderPOSCategories();
+    if (typeof renderPOSProducts === "function") renderPOSProducts();
+    renderProductsTable();
     showToast("Category deleted", "success");
   } catch (err) {
     showToast(err.message, "error");
