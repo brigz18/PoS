@@ -1675,6 +1675,7 @@ svg {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden; /* prevents a horizontal scrollbar flicker during the slide */
 }
 
 .main-header {
@@ -1862,6 +1863,7 @@ svg {
 }
 .page-content.active {
   display: block;
+  animation: page-slide-in 0.28s var(--ease, ease-out) both;
 }
 
 .page-header {
@@ -1883,6 +1885,23 @@ svg {
 .section-title {
   font-size: 15.5px;
   margin-bottom: 14px;
+}
+
+@keyframes page-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-content.active {
+    animation: none;
+  }
 }
 
 /* ---------- Buttons ---------- */
@@ -3319,6 +3338,37 @@ input[type="color"] {
   gap: 6px;
 }
 
+/* ---------- Product image upload (product-modal) ---------- */
+.image-upload-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.image-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-2);
+  border: 1px dashed var(--border-color);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pos-product__thumb img,
+.product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 /* ---------- Print (receipt) ---------- */
 @media print {
   body * {
@@ -3349,17 +3399,6 @@ input[type="color"] {
   }
 }
 @media (max-width: 980px) {
-  #dashboard.page.active {
-    grid-template-columns: var(--sidebar-w-collapsed) 1fr;
-  }
-  #dashboard.page.active .logo-text,
-  #dashboard.page.active .nav-item span,
-  #dashboard.page.active .nav-group__label {
-    display: none;
-  }
-  #dashboard.page.active .nav-item {
-    justify-content: center;
-  }
   .pos {
     grid-template-columns: 1fr;
     height: auto;
@@ -3397,5 +3436,25 @@ input[type="color"] {
   .quick-amounts,
   .permissions-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Sidebar collapse: canonical override ----------
+   Guarantees the toggle always works regardless of any other rule
+   (duplicated blocks, cascade order, etc.) fighting it above. Only
+   applies above the mobile-drawer breakpoint so it never conflicts
+   with the ≤860px slide-in behavior. ---------- */
+#dashboard {
+  transition: grid-template-columns 0.25s var(--ease, ease);
+}
+@media (min-width: 861px) {
+  #dashboard.sidebar-collapsed {
+    grid-template-columns: var(--sidebar-w-collapsed, 84px) 1fr !important;
+  }
+  #dashboard.sidebar-collapsed .sidebar {
+    width: var(--sidebar-w-collapsed, 84px) !important;
+  }
+  .main-content {
+    min-width: 0;
   }
 }
