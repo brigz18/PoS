@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { PERMISSION_KEYS } = require('permissions');
+const { PERMISSION_KEYS } = require('../utils/permissions');
 
 // Build the permissions sub-schema dynamically from PERMISSION_KEYS so this
 // file never has to be hand-edited when a new permission is added -
