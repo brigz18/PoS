@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const asyncHandler = require('../utils/asyncHandler');
-const User = require('../models/User');
-const Business = require('../models/Business');
+const asyncHandler = require('asyncHandler');
+const User = require('User');
+const Business = require('Business');
 
 // Verifies the Bearer JWT, then loads the *current* User and Business
 // documents fresh from the DB on every request (rather than trusting
