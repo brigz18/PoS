@@ -24,6 +24,23 @@ const registerBusiness = asyncHandler(async (req, res) => {
     res.status(402);
     throw new Error('A completed payment is required before registering a business. Please choose a plan and pay first.');
   }
+  // SECURITY: paymentReference must be a plain string before it's ever used
+  // in a query. Without this check, a request body like
+  // { "paymentReference": { "$ne": null } } would reach Mongo as a query
+  // OPERATOR (not a literal value) - matching the first Payment document in
+  // the entire collection, completed or not, someone else's or not. That's
+  // a NoSQL injection that lets an attacker "steal" any real customer's
+  // just-completed payment to register a business for free. This query has
+  // no business scope to fall back on either, since no business exists yet
+  // at registration time - the type check IS the only guard here.
+  if (typeof paymentReference !== 'string' || !paymentReference.trim()) {
+    res.status(400);
+    throw new Error('Invalid payment reference');
+  }
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    res.status(400);
+    throw new Error('Invalid request');
+  }
 
   if (password.length < 6) {
     res.status(400);
@@ -113,6 +130,14 @@ const login = asyncHandler(async (req, res) => {
   if (!email || !password) {
     res.status(400);
     throw new Error('Email and password are required');
+  }
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    // Also blocks NoSQL operator injection like { "email": { "$gt": "" } } -
+    // .toLowerCase() below would already throw on a non-string and get
+    // caught as a generic 500 by asyncHandler, but this gives a clean,
+    // intentional 400 instead of leaking an unhandled-exception shape.
+    res.status(400);
+    throw new Error('Invalid request');
   }
 
   const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
