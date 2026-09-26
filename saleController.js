@@ -36,6 +36,10 @@ const createSale = asyncHandler(async (req, res) => {
   // price the client sent, since that's just whatever was in the browser's
   // cart state and could be stale or tampered with.
   const productIds = items.map((i) => i.productId);
+  if (productIds.some((id) => typeof id !== 'string')) {
+    res.status(400);
+    throw new Error('Invalid item in cart');
+  }
   const products = await Product.find({ _id: { $in: productIds }, business: req.business._id });
   const productMap = new Map(products.map((p) => [String(p._id), p]));
 
@@ -84,6 +88,15 @@ const createSale = asyncHandler(async (req, res) => {
 
   let customer = null;
   if (customerId) {
+    // customerId is already ring-fenced by `business: req.business._id` in
+    // the same query below, so an operator-injection attempt here could
+    // only ever match a customer within the attacker's OWN business (not a
+    // cross-tenant leak) - but reject non-strings anyway rather than lean
+    // on that as the only guard.
+    if (typeof customerId !== 'string') {
+      res.status(400);
+      throw new Error('Invalid customer');
+    }
     customer = await Customer.findOne({ _id: customerId, business: req.business._id });
     if (!customer) {
       res.status(404);
