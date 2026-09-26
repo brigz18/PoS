@@ -121,6 +121,14 @@ const renew = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Payment reference is required');
   }
+  // SECURITY: same NoSQL-injection guard as registerBusiness() - reference
+  // must be a plain string, or a body like { "reference": { "$ne": null } }
+  // would query-match an arbitrary Payment document (any business's) instead
+  // of the one this owner actually paid for.
+  if (typeof reference !== 'string' || !reference.trim()) {
+    res.status(400);
+    throw new Error('Invalid payment reference');
+  }
 
   const payment = await Payment.findOne({ reference });
   if (!payment) {
