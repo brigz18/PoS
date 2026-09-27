@@ -29,7 +29,7 @@
 // If you deploy the API somewhere else, override it before this script loads:
 //   <script>window.SMARTPOS_API_BASE_URL = 'https://your-api-domain.com/api';</script>
 const API_BASE_URL =
-  window.SMARTPOS_API_BASE_URL || "http://localhost:5000/api";
+  window.SMARTPOS_API_BASE_URL || "/api";
 
 const REQUEST_TIMEOUT_MS = 15000;
 
