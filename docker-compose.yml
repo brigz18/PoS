@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartpos
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      # Clients hit the container directly (no reverse proxy in front).
+      # Change to "1" if you put nginx/Caddy/Traefik in front of it.
+      TRUST_PROXY: "0"
+    ports:
+      - "${HOST_PORT:-5000}:5000"
+    restart: unless-stopped
+
+  # Optional local database, so the app works without Atlas / internet.
+  # Start with:  docker compose --profile localdb up -d --build
+  # and set MONGODB_URI=mongodb://mongo:27017/smartpos in backend/.env
+  mongo:
+    image: mongo:7
+    profiles: ["localdb"]
+    container_name: smartpos-mongo
+    restart: unless-stopped
+    volumes:
+      - smartpos_mongo:/data/db
+
+volumes:
+  smartpos_mongo:
