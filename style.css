@@ -3725,3 +3725,245 @@ table.data-table tbody tr:last-child td {
   border-color: var(--border-strong);
   border-top-color: var(--primary-500);
 }
+
+/* ==========================================================================
+   APPEND THIS TO THE VERY END OF frontend/css/style.css
+   Fixes classes the JS/HTML use that had no styles, plus one visibility bug.
+   ========================================================================== */
+
+/* Alerts that start with class="hidden" but are shown by JS via
+   el.style.display = "block" were never visible, because
+   .hidden { display:none !important } beats an inline style. */
+.alert.hidden[style*="display: block"] {
+  display: block !important;
+}
+
+/* ---------- Badge aliases used by app.js ---------- */
+.badge-gray {
+  background: var(--gray-100);
+  color: var(--text-muted);
+}
+.badge-primary {
+  background: var(--primary-soft);
+  color: var(--primary-700);
+}
+.badge--success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.badge--warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.badge--danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* ---------- POS product cards (.product) ---------- */
+.product {
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  background: var(--bg-surface-2);
+  color: var(--text-primary);
+  font-family: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  transition:
+    border-color 0.15s var(--ease),
+    transform 0.12s var(--ease-bounce),
+    box-shadow 0.15s var(--ease);
+}
+.product:hover {
+  border-color: var(--primary-500);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.product:active {
+  transform: translateY(-1px) scale(0.98);
+}
+.product:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+.product__thumb {
+  position: relative;
+  height: 62px;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(135deg, var(--primary-100), var(--accent-soft));
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+.product__fav {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 17px;
+  color: var(--accent-600);
+  cursor: pointer;
+  line-height: 1;
+}
+.product__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.product__name {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.product__sku {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.product__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.product__price {
+  font-weight: 700;
+  color: var(--primary-600);
+  font-size: 13px;
+}
+
+/* ---------- Cart quantity control / empty state ---------- */
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty button {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-2);
+  color: var(--text-secondary);
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s var(--ease-bounce);
+}
+.qty button:hover {
+  border-color: var(--primary-500);
+  color: var(--primary-600);
+  background: var(--primary-soft);
+}
+.qty span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.cart__empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 12.75px;
+}
+
+/* ---------- Customer / supplier cards ---------- */
+.customer-card,
+.supplier-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.18s var(--ease-bounce),
+    box-shadow 0.18s var(--ease);
+}
+.customer-card:hover,
+.supplier-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.customer-header,
+.supplier-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.customer-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.customer-stat {
+  background: var(--bg-surface-2);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  text-align: center;
+}
+.customer-stat .value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+}
+.customer-stat .label {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0;
+}
+.supplier-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary-500), var(--violet-500));
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13.5px;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+.supplier-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ---------- Finance progress bars / category dots ---------- */
+.progress {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--bg-app);
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--primary-500), var(--accent-500));
+}
+.category-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
